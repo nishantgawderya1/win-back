@@ -33,6 +33,24 @@ def fetch(api: str, path: str):
         return json.load(r)
 
 
+def fetch_all_audit(api: str, query: str, page: int = 1000) -> list[dict]:
+    """Page through the audit log until it is exhausted.
+
+    The endpoint caps a single response at 1000 rows. Taking that one page as
+    the whole picture silently truncates: the landing page prints a total
+    decision count, and a capped read would have it report exactly 1000 no
+    matter how much work the agent actually did.
+    """
+    rows: list[dict] = []
+    offset = 0
+    while True:
+        batch = fetch(api, f"{query}&limit={page}&offset={offset}")
+        rows.extend(batch)
+        if len(batch) < page:
+            return rows
+        offset += page
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", default=DEFAULT_API)
@@ -60,10 +78,30 @@ def main() -> int:
     results = fetch(args.api, f"/batch/{bid}/results")
     summary = fetch(args.api, f"/reports/{bid}/summary")
     exceptions = fetch(args.api, f"/exceptions?batch_id={bid}")
-    audit = fetch(args.api, f"/audit?batch_id={bid}&limit=1000")
+    audit = fetch_all_audit(args.api, f"/audit?batch_id={bid}")
+    # Ask for diagnosis entries specifically. Reading them out of the general
+    # audit feed silently undercounts once a batch has been through the retry
+    # scheduler: that feed is newest-first and capped, and resumed payments
+    # re-enter at the planner without re-diagnosing, so the diagnosis rows get
+    # pushed past the limit and the run looks like it never used the model.
+    diagnoses = fetch_all_audit(args.api, f"/audit?batch_id={bid}&agent=diagnosis")
 
     records = results["records"]
-    outcomes = collections.Counter(e["outcome"] for e in audit)
+    outcomes = collections.Counter(e["outcome"] for e in diagnoses)
+    agent_actions = collections.Counter(e["agent"] for e in audit)
+    attempt_ladder = collections.Counter(r["attempt_count"] for r in records)
+
+    # A real diagnosis to show on the landing page. Pick the most confident one
+    # that carries a full reasoning chain — the page quotes the model verbatim,
+    # so this must be genuine output rather than written copy.
+    showcase = max(
+        (
+            r for r in records
+            if r.get("agent_reasoning") and len(r["agent_reasoning"]) >= 4 and r.get("root_cause")
+        ),
+        key=lambda r: (r.get("confidence") or 0, len(r["agent_reasoning"])),
+        default=None,
+    )
     nemotron_ok = outcomes.get("nemotron_ok", 0)
     fallback = outcomes.get("fallback_rules", 0)
 
@@ -112,6 +150,21 @@ def main() -> int:
         # Which engine actually produced the root causes in this run.
         "diagnosis_source": "nemotron" if nemotron_ok > fallback else "rules_fallback",
         "diagnosis_counts": {"nemotron_ok": nemotron_ok, "fallback_rules": fallback},
+        # How far the retry ladder actually climbed, and how much work each
+        # node in the graph did — both are what make this an agent rather than
+        # a one-shot classifier.
+        "attempt_ladder": {str(k): v for k, v in sorted(attempt_ladder.items())},
+        "agent_actions": dict(agent_actions.most_common()),
+        "showcase_diagnosis": None if showcase is None else {
+            "payment_id": showcase["payment_id"],
+            "amount": showcase["amount"],
+            "failure_type": showcase["failure_type"],
+            "root_cause": showcase["root_cause"],
+            "confidence": showcase["confidence"],
+            "customer_recovery_score": showcase["customer_recovery_score"],
+            "intervention": showcase["intervention"],
+            "reasoning": showcase["agent_reasoning"],
+        },
     }
 
     out = Path(args.output)

@@ -11,6 +11,9 @@ asyncpg==0.30.0
 pydantic==2.9.2
 pydantic-settings==2.5.2
 python-multipart==0.0.12
+# Verifies Supabase access tokens. [crypto] pulls in the ES256 support the
+# project's asymmetric signing keys need.
+pyjwt[crypto]==2.10.1
 razorpay==1.4.1
 python-dotenv==1.0.1
 # IANA tz database — stdlib zoneinfo has no data source on Windows,

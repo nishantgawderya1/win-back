@@ -33,6 +33,25 @@ class Settings(BaseSettings):
     # batch. Turn it on to capture the model's full chain into the audit trail.
     llm_enable_thinking: bool = False
 
+    # --- Auth (Supabase) ---
+    # Tokens are signed with the project's asymmetric keys, so the backend
+    # verifies against the public JWKS and holds no secret of its own.
+    supabase_url: str = ""
+    supabase_anon_key: str = ""
+    # Off by default so a clean checkout runs without credentials. Turn it on
+    # and every route except the health check and the Razorpay webhook demands
+    # a valid access token.
+    auth_required: bool = False
+    auth_jwks_ttl_seconds: float = 3600.0
+
+    @property
+    def supabase_jwks_url(self) -> str:
+        return f"{self.supabase_url.rstrip('/')}/auth/v1/.well-known/jwks.json"
+
+    @property
+    def auth_configured(self) -> bool:
+        return bool(self.supabase_url)
+
     # --- Locale ---
     # Stopping rules and retry windows are merchant-local, not UTC.
     merchant_timezone: str = "Asia/Kolkata"

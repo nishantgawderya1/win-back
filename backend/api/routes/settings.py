@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.api.auth import auth_status
 from backend.config import settings
 from backend.config_runtime import runtime_rules
 from backend.db import repository
@@ -79,4 +80,5 @@ async def get_connection(request: Request) -> dict:
         "llm_status_reason": None if llm_status is None else llm_status["reason"],
         "merchant_timezone": settings.merchant_timezone,
         "scheduler_enabled": settings.scheduler_enabled,
+        **auth_status(),
     }

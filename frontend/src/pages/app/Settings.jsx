@@ -182,9 +182,19 @@ export default function Settings() {
           </div>
         </div>
         <p className="settings-desc">
-          Add the webhook URL in your Razorpay dashboard under Settings → Webhooks, subscribed to{" "}
-          <span className="mono">payment.failed</span> and{" "}
-          <span className="mono">subscription.charged.failed</span>.
+          Add the webhook URL in your Razorpay dashboard under Account &amp; Settings → Webhooks,
+          and subscribe to every event below. The secret is one you choose there and paste into{" "}
+          <span className="mono">RAZORPAY_WEBHOOK_SECRET</span>; Razorpay does not issue it.
+        </p>
+        <ul className="event-list mono">
+          {(conn?.webhook_events || []).map((e) => (
+            <li key={e}>{e}</li>
+          ))}
+        </ul>
+        <p className="settings-desc">
+          <span className="mono">payment.failed</span> starts the agent;{" "}
+          <span className="mono">payment_link.paid</span> is what confirms a recovery, so leaving it
+          unticked means links go out and nothing ever comes back.
         </p>
       </Panel>
 

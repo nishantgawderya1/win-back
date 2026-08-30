@@ -72,7 +72,15 @@ async def get_connection(request: Request) -> dict:
         "razorpay_key_id_masked": _mask(key_id),
         "test_mode": key_id.startswith("rzp_test"),
         "webhook_url": f"{base}/api/webhook/razorpay",
-        "webhook_events": ["payment.failed", "subscription.charged.failed"],
+        # Must match what routes/webhook.py actually handles. Omitting
+        # payment_link.paid would leave the recovery loop open: the agent
+        # would send links and never learn that any of them were paid.
+        "webhook_events": [
+            "payment.failed",
+            "payment_link.paid",
+            "payment.captured",
+            "subscription.charged.failed",
+        ],
         "llm_model": settings.nemotron_model,
         "llm_base_url": settings.nvidia_base_url,
         "llm_key_configured": not settings.nvidia_api_key.endswith("placeholder"),

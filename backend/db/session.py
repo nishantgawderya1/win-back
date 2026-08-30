@@ -63,11 +63,25 @@ def _add_missing_columns(conn) -> None:
         for column in table.columns:
             if column.name in existing:
                 continue
+
+            # Always add nullable, then backfill. Appending a typed literal
+            # default to the DDL is not portable — "BOOLEAN NOT NULL DEFAULT 0"
+            # is fine on SQLite and a syntax error on Postgres, and JSON has no
+            # sensible bare literal at all. A bound parameter sidesteps both.
             ddl = column.type.compile(dialect=conn.dialect)
-            null = "" if column.nullable else " NOT NULL DEFAULT 0"
             conn.execute(
-                text(f'ALTER TABLE {table.name} ADD COLUMN "{column.name}" {ddl}{null}')
+                text(f'ALTER TABLE {table.name} ADD COLUMN "{column.name}" {ddl}')
             )
+
+            default = getattr(column.default, "arg", None)
+            if default is not None and not callable(default):
+                conn.execute(
+                    text(
+                        f'UPDATE {table.name} SET "{column.name}" = :value '
+                        f'WHERE "{column.name}" IS NULL'
+                    ),
+                    {"value": default},
+                )
             print(f"[db] added {table.name}.{column.name}")
 
 

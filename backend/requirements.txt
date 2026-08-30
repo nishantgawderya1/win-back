@@ -5,6 +5,9 @@ langgraph==0.2.28
 openai==1.51.0
 sqlalchemy[asyncio]==2.0.35
 aiosqlite==0.20.0
+# Postgres driver — only needed if DATABASE_URL points at Postgres/Supabase
+# rather than the default SQLite file.
+asyncpg==0.30.0
 pydantic==2.9.2
 pydantic-settings==2.5.2
 python-multipart==0.0.12

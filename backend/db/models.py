@@ -52,6 +52,10 @@ class PaymentRecord(Base):
     intervention: Mapped[str | None] = mapped_column(String, nullable=True)
     confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     customer_recovery_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    # The Razorpay link sent to the customer. Indexed because the
+    # payment_link.paid webhook arrives keyed by it.
+    payment_link_id: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    payment_link_url: Mapped[str | None] = mapped_column(String, nullable=True)
     attempt_count: Mapped[int] = mapped_column(Integer, default=0)
     last_attempted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     # The scheduler's work queue: when this is in the past and the payment is

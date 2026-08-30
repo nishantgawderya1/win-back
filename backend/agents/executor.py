@@ -44,8 +44,23 @@ async def executor_node(state: WinBackState) -> WinBackState:
         detail = f"Retry (idempotency {result['idempotency_key']}) -> {outcome}."
 
     elif intervention in OUTREACH_INTERVENTIONS:
-        link = await razorpay.create_payment_link(state.payment_id, state.amount)
-        detail = await _send_outreach(state, intervention, link)
+        link = await razorpay.create_payment_link(
+            state.payment_id,
+            state.amount,
+            customer_name=state.customer_name,
+            customer_email=state.customer_email,
+            customer_phone=state.customer_phone,
+            attempt=state.attempt_count + 1,
+        )
+        updates["payment_link_id"] = link["id"]
+        updates["payment_link_url"] = link["short_url"]
+
+        detail = await _send_outreach(state, intervention, link["short_url"])
+        detail += (
+            f" Razorpay link {link['id']}."
+            if link["live"]
+            else f" Simulated link ({link['error'] or 'no Razorpay credentials configured'})."
+        )
         outcome = "outreach_sent"
 
         # Outreach can draw a reply. A customer who names a date changes what

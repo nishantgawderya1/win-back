@@ -73,6 +73,10 @@ class WinBackState(BaseModel):
     retry_scheduled_at: datetime | None = None
 
     # --- Execution state ---
+    # The Razorpay payment link the agent sent. `payment_link_id` is what the
+    # payment_link.paid webhook correlates against to confirm a recovery.
+    payment_link_id: str | None = None
+    payment_link_url: str | None = None
     attempt_count: int = 0
     last_attempted_at: datetime | None = None
     customer_opted_out: bool = False

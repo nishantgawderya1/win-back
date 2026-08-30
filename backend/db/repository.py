@@ -92,6 +92,8 @@ async def upsert_payment_record(db: AsyncSession, state: WinBackState) -> None:
         intervention=state.intervention.value if state.intervention else None,
         confidence=state.confidence,
         customer_recovery_score=state.customer_recovery_score,
+        payment_link_id=state.payment_link_id,
+        payment_link_url=state.payment_link_url,
         attempt_count=state.attempt_count,
         last_attempted_at=clock.to_db(state.last_attempted_at),
         retry_scheduled_at=clock.to_db(state.retry_scheduled_at),
@@ -351,3 +353,29 @@ async def clear_retry_schedule(db: AsyncSession, payment_id: str) -> None:
         .values(retry_scheduled_at=None)
     )
     await db.commit()
+
+
+async def find_by_payment_link(db: AsyncSession, link_id: str) -> PaymentRecord | None:
+    """Correlate an inbound Razorpay webhook back to the payment we were chasing."""
+    rows = await db.execute(
+        select(PaymentRecord).where(PaymentRecord.payment_link_id == link_id).limit(1)
+    )
+    return rows.scalars().first()
+
+
+async def mark_recovered(
+    db: AsyncSession, *, payment_id: str, amount: float
+) -> PaymentRecord | None:
+    """Record a confirmed recovery and take the payment out of the retry queue.
+
+    Idempotent: a webhook that arrives twice, or after the agent already
+    recorded the recovery, must not double-count the money.
+    """
+    record = await db.get(PaymentRecord, payment_id)
+    if record is None or record.recovered:
+        return record
+    record.recovered = True
+    record.recovered_amount = amount
+    record.retry_scheduled_at = None
+    await db.commit()
+    return record

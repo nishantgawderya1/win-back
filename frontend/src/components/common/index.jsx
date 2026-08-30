@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { label as fmtLabel } from "../../lib/format.js";
 
-/* Button — amber is reserved for the primary action on a screen. */
+/* Button — accent is reserved for the primary action on a screen. */
 export function Button({ variant = "primary", as: As = "button", children, ...rest }) {
   return (
     <As className={`btn btn-${variant}`} {...rest}>
@@ -15,8 +15,8 @@ const PILL_TONE = {
   recovered: "success",
   success: "success",
   nemotron_ok: "success",
-  halted: "amber",
-  outreach_sent: "amber",
+  halted: "accent",
+  outreach_sent: "accent",
   escalated: "danger",
   retry_failed: "danger",
   failed: "danger",
@@ -27,7 +27,7 @@ export function Pill({ tone, children }) {
   return <span className={`pill pill-${resolved}`}>{fmtLabel(children)}</span>;
 }
 
-/* MetricCard — the headline numbers. Mono, large, amber only for money. */
+/* MetricCard — the headline numbers. Mono, large, accent only for money. */
 export function MetricCard({ label, value, tone = "default", hint }) {
   return (
     <div className="metric">
@@ -38,7 +38,7 @@ export function MetricCard({ label, value, tone = "default", hint }) {
   );
 }
 
-/* Status dot — pulses amber while the socket is live. */
+/* Status dot — pulses accent while the socket is live. */
 export function StatusDot({ on, labelText = "LIVE" }) {
   return (
     <span className="status">
@@ -86,7 +86,7 @@ export function Select({ value, onChange, options, placeholder }) {
   );
 }
 
-/* Progress bar — amber fill on a dark track. */
+/* Progress bar — accent fill on a dark track. */
 export const ProgressBar = forwardRef(function ProgressBar({ value, max }, ref) {
   const p = max ? Math.min(100, (value / max) * 100) : 0;
   return (

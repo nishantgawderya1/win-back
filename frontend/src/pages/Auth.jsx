@@ -48,7 +48,7 @@ export default function Auth() {
           />
         </label>
 
-        <button type="submit" className="btn btn-amber btn-block">
+        <button type="submit" className="btn btn-primary btn-block">
           Enter WinBack
         </button>
       </form>

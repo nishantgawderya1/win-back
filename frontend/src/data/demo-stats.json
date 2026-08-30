@@ -1,21 +1,21 @@
 {
-  "batch_id": "batch_127a770f",
-  "captured_at": "2026-08-30T10:39:05+00:00",
+  "batch_id": "batch_7d9c3678",
+  "captured_at": "2026-08-30T11:20:37+00:00",
   "record_count": 75,
   "total_at_risk": 2066226.3,
-  "total_recovered": 474114.65,
-  "recovery_rate": 0.2295,
-  "recovered_count": 16,
+  "total_recovered": 493724.73,
+  "recovery_rate": 0.2389,
+  "recovered_count": 17,
   "escalated_count": 9,
   "halted_count": 3,
-  "unresolved_count": 59,
-  "total_unrecovered": 1592111.65,
+  "unresolved_count": 58,
+  "total_unrecovered": 1572501.57,
   "failure_type_count": 6,
   "by_failure_type": {
     "upi_timeout": {
       "count": 21,
       "at_risk": 631788.1,
-      "recovered": 300697.26
+      "recovered": 320307.34
     },
     "card_bank_block": {
       "count": 9,
@@ -44,7 +44,7 @@
     }
   },
   "exception_reasons": {
-    "retried_without_success": 47,
+    "retried_without_success": 46,
     "escalated_to_human": 9,
     "stopping_rule_halted": 3
   },
@@ -56,16 +56,16 @@
       "reason": "Unresolved after 1 attempt(s)."
     },
     {
-      "payment_id": "pay_d28934674c6a",
-      "amount": 13870.91,
-      "failure_type": "card_insufficient",
-      "reason": "Unresolved after 1 attempt(s)."
-    },
-    {
-      "payment_id": "pay_f19d544ca35d",
-      "amount": 23936.64,
+      "payment_id": "pay_44c43b984c18",
+      "amount": 49236.01,
       "failure_type": "card_bank_block",
       "reason": "Hard bank block \u2014 automated retries are pointless. Hand to human."
+    },
+    {
+      "payment_id": "pay_ad6ca160053c",
+      "amount": 42422.45,
+      "failure_type": "card_insufficient",
+      "reason": "Unresolved after 1 attempt(s)."
     }
   ],
   "diagnosis_source": "nemotron",

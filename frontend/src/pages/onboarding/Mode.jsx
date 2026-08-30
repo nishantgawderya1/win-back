@@ -77,7 +77,7 @@ export default function Mode() {
 
       <button
         type="button"
-        className="btn btn-amber btn-block"
+        className="btn btn-primary btn-block"
         disabled={!mode}
         onClick={submit}
       >

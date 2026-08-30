@@ -1,30 +1,41 @@
-/* WinBack AI — Design System v1.0 tokens.
-   Amber is the most meaningful colour here: it appears only where money is
-   involved or where the agent took a significant action. Do not spend it. */
+/* WinBack AI — Design System v2.0 tokens (Razorpay palette).
+
+   Light ground, Prussian Blue for structure and type, Dodger Blue as the one
+   accent. The accent keeps the discipline the amber had: it appears where money
+   is involved or where the agent took a significant action, and nowhere else.
+   That is harder in a blue theme, because blue is also the reflex colour for
+   links and chrome — so chrome uses Prussian Blue and muted greys, and Dodger
+   Blue is reserved. */
 :root {
   /* Backgrounds */
-  --color-page: #0a0b0f;
-  --color-surface: #111318;
-  --color-surface-deep: #0d0f14;
+  --color-page: #ffffff;
+  --color-surface: #f5f8fc;      /* raised panels, section bands */
+  --color-surface-deep: #eef3f9;  /* sidebar, deepest cards */
 
-  /* Borders */
-  --color-border: #1e2229;
-  --color-border-focus: #f59e0b;
+  /* Borders — structural hairlines, always 1px */
+  --color-border: #d8e3ef;
+  --color-border-strong: #b9cadd;
+  --color-border-focus: #0d94fb;
 
-  /* Text */
-  --color-text-primary: #f0f2f5;
-  --color-text-secondary: #8b909a;
-  --color-text-muted: #4b5563;
+  /* Text — Prussian Blue rather than black; softer, and on-brand */
+  --color-text-primary: #012652;
+  --color-text-secondary: #486382;
+  --color-text-muted: #8ba0b8;
 
-  /* Accent */
-  --color-amber: #f59e0b;
-  --color-amber-light: #fcd34d;
-  --color-amber-dark: #92400e;
+  /* Accent — Dodger Blue. Money, primary action, focus, live state. */
+  --color-accent: #0d94fb;
+  --color-accent-light: #3daefc;  /* hover */
+  --color-accent-dark: #012652;   /* Prussian, for deep emphasis */
+  --color-accent-wash: rgba(13, 148, 251, 0.08);
+  --color-accent-wash-soft: rgba(13, 148, 251, 0.04);
+
+  /* Brand */
+  --color-prussian: #012652;
 
   /* Status */
-  --color-success: #10b981;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
+  --color-success: #0a7f5c;
+  --color-danger: #d92d20;
+  --color-warning: #b25e02;
 
   /* Typography */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

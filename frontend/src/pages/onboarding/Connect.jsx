@@ -67,7 +67,7 @@ export default function Connect() {
           </p>
         </div>
 
-        <button type="submit" className="btn btn-amber btn-block">
+        <button type="submit" className="btn btn-primary btn-block">
           Connect →
         </button>
       </form>

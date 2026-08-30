@@ -91,7 +91,7 @@ export default function Landing() {
             <a href="#capabilities" onClick={() => setMenuOpen(false)}>
               Features
             </a>
-            <Link to="/auth" className="btn btn-ghost-amber">
+            <Link to="/auth" className="btn btn-ghost-accent">
               Connect Razorpay
             </Link>
           </nav>
@@ -122,7 +122,7 @@ export default function Landing() {
               hard stopping rules.
             </p>
             <div className="hero-ctas">
-              <Link to="/auth" className="btn btn-ghost-amber btn-lg">
+              <Link to="/auth" className="btn btn-ghost-accent btn-lg">
                 Connect Razorpay
               </Link>
               <Link to="/auth" className="btn btn-link">
@@ -230,7 +230,7 @@ export default function Landing() {
               </div>
               {stats.sample_exceptions.map((e) => (
                 <div className="ep-row mono" key={e.payment_id}>
-                  <span className="amber">{e.payment_id}</span>
+                  <span className="accent">{e.payment_id}</span>
                   <span>{inr(e.amount)}</span>
                   <span className="muted">{label(e.failure_type)}</span>
                   <span className="muted">{e.reason}</span>
@@ -253,7 +253,7 @@ export default function Landing() {
             <div className="integ-row mono">
               <span className="integ-brand">Razorpay</span>
               <span className="integ-link">←→</span>
-              <span className="integ-brand amber">WinBack AI</span>
+              <span className="integ-brand accent">WinBack AI</span>
             </div>
             <p className="mono dim integ-meta">Built on Razorpay test-mode APIs</p>
             <p className="mono dim integ-meta">payment.failed · subscription.charged.failed</p>
@@ -270,7 +270,7 @@ export default function Landing() {
             <br />
             Run the first batch.
           </h2>
-          <Link to="/auth" className="btn btn-amber btn-lg">
+          <Link to="/auth" className="btn btn-primary btn-lg">
             Connect Razorpay →
           </Link>
           <p className="mono dim cta-note">

@@ -136,7 +136,7 @@ export default function Settings() {
         <div className="settings-actions">
           <button
             type="button"
-            className="btn btn-amber"
+            className="btn btn-primary"
             onClick={save}
             disabled={!dirty || saving}
           >
@@ -174,7 +174,7 @@ export default function Settings() {
           </div>
           <div className="expand-row">
             <span className="expand-key mono dim">model key</span>
-            <span className={`mono ${conn?.llm_key_configured ? "" : "amber"}`}>
+            <span className={`mono ${conn?.llm_key_configured ? "" : "accent"}`}>
               {conn?.llm_key_configured
                 ? "configured"
                 : "not configured — diagnosis falls back to rules"}

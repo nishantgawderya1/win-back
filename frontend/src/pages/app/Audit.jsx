@@ -124,7 +124,7 @@ export default function Audit() {
             <div className="expand">
               <div className="expand-row">
                 <span className="expand-key mono dim">amount</span>
-                <span className={`mono ${detail.record.recovered ? "amber" : "muted"}`}>
+                <span className={`mono ${detail.record.recovered ? "accent" : "muted"}`}>
                   {inr(detail.record.amount)}
                 </span>
               </div>
@@ -144,7 +144,7 @@ export default function Audit() {
                 <span className="mono dim chain-time">{dateTime(e.timestamp)}</span>
                 <span className="mono chain-agent">{label(e.agent)}</span>
                 <span className="chain-reason">{e.reason}</span>
-                {e.outcome && <span className="mono amber chain-outcome">{e.outcome}</span>}
+                {e.outcome && <span className="mono accent chain-outcome">{e.outcome}</span>}
               </li>
             ))}
           </ol>
@@ -189,7 +189,7 @@ export default function Audit() {
             {
               key: "payment_id",
               header: "payment_id",
-              render: (e) => <span className="mono amber">{e.payment_id}</span>,
+              render: (e) => <span className="mono accent">{e.payment_id}</span>,
             },
             {
               key: "agent",

@@ -43,7 +43,7 @@ export default function Exceptions() {
       />
 
       <div className="unrecovered">
-        <div className="unrecovered-value mono amber">{inrCompact(data?.total_unrecovered)}</div>
+        <div className="unrecovered-value mono accent">{inrCompact(data?.total_unrecovered)}</div>
         <div className="eyebrow">Unrecovered</div>
         <p className="unrecovered-copy">
           These payments could not be recovered automatically. Each entry carries the specific
@@ -75,7 +75,7 @@ export default function Exceptions() {
             {
               key: "payment_id",
               header: "payment_id",
-              render: (r) => <span className="mono amber">{r.payment_id}</span>,
+              render: (r) => <span className="mono accent">{r.payment_id}</span>,
             },
             {
               key: "amount",
@@ -105,7 +105,7 @@ export default function Exceptions() {
                 r.escalated ? (
                   <Pill tone="danger">escalated</Pill>
                 ) : r.halted ? (
-                  <Pill tone="amber">halted</Pill>
+                  <Pill tone="accent">halted</Pill>
                 ) : (
                   <span className="dim mono">no</span>
                 ),

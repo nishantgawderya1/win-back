@@ -1,5 +1,5 @@
 /* Landing page. Sharp edges, hairline borders, no shadow, no gradient.
-   Amber appears only on money, the CTA, and focus. */
+   Dodger Blue appears only on money, the CTA, and focus. */
 
 .landing {
   --max: 1280px;
@@ -33,7 +33,7 @@
   color: var(--color-text-primary);
 }
 .wordmark-ai {
-  color: var(--color-amber);
+  color: var(--color-accent);
   font-family: var(--font-mono);
   font-size: 10px;
   vertical-align: super;
@@ -73,22 +73,22 @@
 .btn-lg { padding: 14px 26px; font-size: 15px; }
 .btn-block { width: 100%; }
 
-.btn-ghost-amber {
-  border-color: var(--color-amber);
-  color: var(--color-amber);
+.btn-ghost-accent {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
   background: transparent;
 }
-.btn-ghost-amber:hover {
-  background: var(--color-amber);
+.btn-ghost-accent:hover {
+  background: var(--color-accent);
   color: var(--color-page);
 }
-.btn-amber {
-  background: var(--color-amber);
+.btn-primary {
+  background: var(--color-accent);
   color: var(--color-page);
   font-weight: 600;
 }
-.btn-amber:hover { background: var(--color-amber-light); }
-.btn-amber:disabled {
+.btn-primary:hover { background: var(--color-accent-light); }
+.btn-primary:disabled {
   background: var(--color-border);
   color: var(--color-text-muted);
   cursor: not-allowed;
@@ -97,17 +97,17 @@
   border-color: var(--color-border);
   color: var(--color-text-secondary);
 }
-.btn-ghost:hover { border-color: var(--color-amber); color: var(--color-amber); }
+.btn-ghost:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .btn-link { color: var(--color-text-secondary); padding-left: 0; }
 .btn-link:hover { color: var(--color-text-primary); }
 
 .linkish {
-  color: var(--color-amber);
+  color: var(--color-accent);
   font-size: 12px;
   padding: 0;
   cursor: pointer;
 }
-.linkish:hover { color: var(--color-amber-light); }
+.linkish:hover { color: var(--color-accent-light); }
 
 /* --- Hero --- */
 .hero {
@@ -143,7 +143,7 @@
 /* --- Signature visual: the live audit feed --- */
 .lfeed {
   border: 1px solid var(--color-border);
-  border-top: 1px solid var(--color-amber);
+  border-top: 1px solid var(--color-accent);
   background: var(--color-surface);
   display: flex;
   flex-direction: column;
@@ -158,7 +158,7 @@
   font-size: 11px;
   letter-spacing: 0.1em;
 }
-.lfeed-title { color: var(--color-amber); }
+.lfeed-title { color: var(--color-accent); }
 .lfeed-status {
   color: var(--color-text-secondary);
   display: inline-flex;
@@ -191,13 +191,13 @@
 .lfeed-sep { color: var(--color-text-muted); }
 .lfeed-value { color: var(--color-text-primary); }
 .lfeed-recovered {
-  color: var(--color-amber);
+  color: var(--color-accent);
   font-weight: 700;
   animation: wb-pulse 700ms ease-in-out 2;
 }
-.lfeed-halted .lfeed-value { color: var(--color-amber-light); }
+.lfeed-halted .lfeed-value { color: var(--color-accent-light); }
 .lfeed-escalated .lfeed-value { color: var(--color-danger); }
-.lfeed-amber .lfeed-value { color: var(--color-amber); }
+.lfeed-accent .lfeed-value { color: var(--color-accent); }
 .lfeed-foot {
   border-top: 1px solid var(--color-border);
   padding: var(--space-3) var(--space-4);
@@ -222,7 +222,7 @@
 }
 .bignum-value {
   font-size: clamp(44px, 6vw, 84px);
-  color: var(--color-amber);
+  color: var(--color-accent);
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -256,14 +256,14 @@
   left: -4px;
   font-size: 56px;
   font-weight: 700;
-  color: var(--color-amber);
+  color: var(--color-accent);
   opacity: 0.1;
   pointer-events: none;
 }
 .step-icon {
   width: 16px;
   height: 16px;
-  border: 1px solid var(--color-amber);
+  border: 1px solid var(--color-accent);
   margin-bottom: var(--space-4);
 }
 .step-title { font-size: 20px; margin-bottom: var(--space-3); }
@@ -281,8 +281,8 @@
   padding: var(--space-6);
   transition: border-color 150ms ease;
 }
-.cap:hover { border-color: var(--color-amber); }
-.cap-accent { border-left: 2px solid rgba(245, 158, 11, 0.6); }
+.cap:hover { border-color: var(--color-accent); }
+.cap-accent { border-left: 2px solid rgba(13, 148, 251, 0.6); }
 .cap-title { font-size: 16px; margin-bottom: var(--space-3); }
 .cap-body { color: var(--color-text-secondary); font-size: 13px; }
 
@@ -365,7 +365,7 @@
   gap: var(--space-4);
   font-size: 12px;
 }
-.lfooter a:hover { color: var(--color-amber); }
+.lfooter a:hover { color: var(--color-accent); }
 
 /* --- Responsive --- */
 @media (max-width: 1024px) {

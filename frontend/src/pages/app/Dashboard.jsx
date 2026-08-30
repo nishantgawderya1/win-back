@@ -10,7 +10,7 @@ import { api } from "../../lib/api.js";
 import { dateTime, inr, inrCompact, label, pct } from "../../lib/format.js";
 
 // Recovery rate is the one metric that earns a colour by value.
-const rateTone = (r) => (r >= 0.5 ? "success" : r >= 0.3 ? "amber" : "danger");
+const rateTone = (r) => (r >= 0.5 ? "success" : r >= 0.3 ? "accent" : "danger");
 
 export default function Dashboard() {
   const { events, connected } = useWebSocket();
@@ -36,7 +36,7 @@ export default function Dashboard() {
         title="Dashboard"
         meta={latestComplete ? `latest batch ${latestComplete.id}` : "no completed batches yet"}
         actions={
-          <Link to="/batch" className="btn btn-amber">
+          <Link to="/batch" className="btn btn-primary">
             New batch
           </Link>
         }
@@ -47,7 +47,7 @@ export default function Dashboard() {
         <MetricCard
           label="Total recovered"
           value={inrCompact(summary?.total_recovered)}
-          tone="amber"
+          tone="accent"
         />
         <MetricCard
           label="Recovery rate"
@@ -84,7 +84,7 @@ export default function Dashboard() {
                   <div className="ftype" key={type}>
                     <div className="ftype-head mono">
                       <span className="muted">{label(type)}</span>
-                      <span className={v.recovered > 0 ? "amber" : "dim"}>
+                      <span className={v.recovered > 0 ? "accent" : "dim"}>
                         {inrCompact(v.recovered)} / {inrCompact(v.at_risk)}
                       </span>
                     </div>
@@ -107,7 +107,7 @@ export default function Dashboard() {
               key: "id",
               header: "batch_id",
               render: (b) => (
-                <Link className="mono amber" to={`/batch/${b.id}`}>
+                <Link className="mono accent" to={`/batch/${b.id}`}>
                   {b.id}
                 </Link>
               ),
@@ -135,7 +135,7 @@ export default function Dashboard() {
               key: "total_recovered",
               header: "recovered",
               render: (b) => (
-                <span className={`mono ${b.total_recovered > 0 ? "amber" : "dim"}`}>
+                <span className={`mono ${b.total_recovered > 0 ? "accent" : "dim"}`}>
                   {inr(b.total_recovered)}
                 </span>
               ),
@@ -149,7 +149,7 @@ export default function Dashboard() {
               key: "status",
               header: "status",
               render: (b) => (
-                <span className={`pill pill-${b.status === "complete" ? "success" : "amber"}`}>
+                <span className={`pill pill-${b.status === "complete" ? "success" : "accent"}`}>
                   {b.status.toUpperCase()}
                 </span>
               ),

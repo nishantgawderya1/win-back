@@ -1,6 +1,7 @@
 /* Product shell + screens.
-   Note the inversion from the landing page: here the main area is the raised
-   surface and cards sit on the darker page colour. */
+   On the light ground the relationship flips from the original dark build:
+   the app area carries a faint blue tint and panels sit on white above it, so
+   elevation still comes from contrast alone with no shadow anywhere. */
 
 /* --- Shell --- */
 .shell {
@@ -10,8 +11,8 @@
 }
 
 .sidebar {
-  background: var(--color-surface-deep);
-  border-right: 1px solid var(--color-border);
+  background: var(--color-prussian);
+  border-right: 1px solid var(--color-prussian);
   display: flex;
   flex-direction: column;
   padding: var(--space-6) 0;
@@ -21,6 +22,7 @@
 }
 .sidebar-brand {
   padding: 0 var(--space-6) var(--space-6);
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -30,19 +32,20 @@
 .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; }
 .nav-item {
   padding: 9px var(--space-6);
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.66);
   border-left: 2px solid transparent;
   font-size: 14px;
   transition: color 150ms ease, border-color 150ms ease;
 }
-.nav-item:hover { color: var(--color-text-primary); }
+.nav-item:hover { color: #ffffff; }
 .nav-active {
-  color: var(--color-amber);
-  border-left-color: var(--color-amber);
+  color: #ffffff;
+  border-left-color: var(--color-accent);
+  background: rgba(13, 148, 251, 0.14);
 }
 .sidebar-user {
   padding: var(--space-4) var(--space-6) 0;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   margin-top: var(--space-4);
   display: flex;
   flex-direction: column;
@@ -76,7 +79,7 @@
 .status { display: inline-flex; align-items: center; gap: 6px; }
 .status-text { font-size: 10px; letter-spacing: 0.1em; color: var(--color-text-secondary); }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
-.dot-on { background: var(--color-amber); animation: wb-pulse 2s ease-in-out infinite; }
+.dot-on { background: var(--color-accent); animation: wb-pulse 2s ease-in-out infinite; }
 .dot-off { background: var(--color-text-muted); }
 
 /* --- Panels --- */
@@ -125,7 +128,7 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
-.tone-amber { color: var(--color-amber); }
+.tone-accent { color: var(--color-accent); }
 .tone-success { color: var(--color-success); }
 .tone-danger { color: var(--color-danger); }
 .metric-label {
@@ -151,7 +154,7 @@
 .ftype-head { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
 
 .pbar { height: 4px; background: var(--color-border); width: 100%; }
-.pbar-fill { height: 100%; background: var(--color-amber); transition: width 300ms ease; }
+.pbar-fill { height: 100%; background: var(--color-accent); transition: width 300ms ease; }
 
 .results-grid {
   display: grid;
@@ -178,10 +181,10 @@
   background: var(--color-page);
   animation: wb-slide-in 260ms ease-out both;
 }
-.event-recovered { border-top: 1px solid var(--color-amber); }
+.event-recovered { border-top: 1px solid var(--color-accent); }
 .event-success { border-top: 1px solid var(--color-success); }
 .event-danger { border-top: 1px solid var(--color-danger); }
-.event-amber { border-top: 1px solid var(--color-amber-dark); }
+.event-accent { border-top: 1px solid var(--color-accent-dark); }
 .event-flash { animation: wb-slide-in 260ms ease-out both, wb-flash 1200ms ease-out 260ms both; }
 .event-head { display: flex; justify-content: space-between; align-items: baseline; }
 .event-agent {
@@ -215,7 +218,7 @@
   white-space: nowrap;
 }
 .pill-recovered,
-.pill-amber { border-color: var(--color-amber); color: var(--color-amber); }
+.pill-accent { border-color: var(--color-accent); color: var(--color-accent); }
 .pill-success { border-color: var(--color-success); color: var(--color-success); }
 .pill-danger { border-color: var(--color-danger); color: var(--color-danger); }
 .pill-muted { color: var(--color-text-muted); }
@@ -242,7 +245,7 @@
   vertical-align: middle;
 }
 .dt-clickable { cursor: pointer; }
-.dt-row:hover td { background: rgba(245, 158, 11, 0.03); }
+.dt-row:hover td { background: var(--color-accent-wash-soft); }
 .dt-toggle {
   width: 32px;
   color: var(--color-text-muted);
@@ -253,7 +256,7 @@
 .dt-expanded td {
   height: auto;
   padding: var(--space-4);
-  background: var(--color-surface-deep);
+  background: var(--color-surface);
 }
 
 .expand { display: flex; flex-direction: column; gap: var(--space-3); }
@@ -297,9 +300,9 @@
   transition: border-color 150ms ease, background-color 150ms ease;
   background: var(--color-page);
 }
-.dropzone:hover, .dropzone-over { border-color: var(--color-amber); border-style: solid; }
-.dropzone-over { background: rgba(245, 158, 11, 0.05); }
-.dropzone-filled { border-style: solid; border-color: var(--color-amber); }
+.dropzone:hover, .dropzone-over { border-color: var(--color-accent); border-style: solid; }
+.dropzone-over { background: var(--color-accent-wash); }
+.dropzone-filled { border-style: solid; border-color: var(--color-accent); }
 .upload-icon {
   width: 28px; height: 28px;
   stroke: var(--color-text-secondary);
@@ -308,7 +311,7 @@
   margin-bottom: var(--space-4);
 }
 .dropzone-text { font-size: 15px; }
-.dropzone-file { font-size: 14px; color: var(--color-amber); }
+.dropzone-file { font-size: 14px; color: var(--color-accent); }
 .dropzone-cols {
   font-size: 10px;
   margin-top: var(--space-4);
@@ -328,7 +331,7 @@
 /* --- Exceptions header --- */
 .unrecovered {
   border: 1px solid var(--color-border);
-  border-left: 2px solid var(--color-amber);
+  border-left: 2px solid var(--color-accent);
   padding: var(--space-6);
   margin-bottom: var(--space-6);
   background: var(--color-page);
@@ -344,7 +347,7 @@
 
 /* --- Callout --- */
 .callout {
-  border-left: 2px solid var(--color-amber);
+  border-left: 2px solid var(--color-accent);
   background: var(--color-page);
   padding: var(--space-4);
   margin: var(--space-4) 0;
@@ -353,7 +356,7 @@
 }
 .callout-wide { margin-bottom: var(--space-6); }
 .callout p + p { margin-top: var(--space-2); font-size: 11px; }
-.callout a { color: var(--color-amber); }
+.callout a { color: var(--color-accent); }
 
 /* --- Settings --- */
 .settings-desc { color: var(--color-text-secondary); font-size: 13px; margin-bottom: var(--space-6); max-width: 70ch; }
@@ -378,12 +381,12 @@
 .toggles { display: flex; flex-direction: column; gap: var(--space-3); }
 .toggle-row { display: flex; align-items: center; gap: var(--space-3); font-size: 13px; }
 .toggle { width: 28px; height: 14px; border: 1px solid var(--color-border); position: relative; flex: none; }
-.toggle-on { border-color: var(--color-amber); }
+.toggle-on { border-color: var(--color-accent); }
 .toggle-on::after {
   content: "";
   position: absolute; top: 2px; right: 2px;
   width: 8px; height: 8px;
-  background: var(--color-amber);
+  background: var(--color-accent);
 }
 .toggle-row .mono { margin-left: auto; font-size: 10px; }
 
@@ -415,18 +418,18 @@
 }
 .auth-note { font-size: 10px; margin-top: var(--space-4); }
 .auth-alt { font-size: 12px; margin-top: var(--space-3); }
-.auth-alt a { color: var(--color-amber); }
+.auth-alt a { color: var(--color-accent); }
 .auth-alt a.dim { color: var(--color-text-muted); }
 
 .onboarding { width: 560px; max-width: 100%; }
 .progress-dots { display: flex; gap: var(--space-2); margin-bottom: var(--space-8); }
 .pdot { width: 28px; height: 2px; background: var(--color-border); }
-.pdot-active { background: var(--color-amber); }
+.pdot-active { background: var(--color-accent); }
 .ob-title { font-size: 28px; margin-bottom: var(--space-4); letter-spacing: -0.03em; }
 .ob-sub { color: var(--color-text-secondary); margin-bottom: var(--space-6); max-width: 60ch; }
 .ob-form { display: flex; flex-direction: column; gap: var(--space-4); }
 .ob-hint { font-size: 11px; margin-top: var(--space-4); }
-.ob-hint a { color: var(--color-amber); }
+.ob-hint a { color: var(--color-accent); }
 .done-word { font-size: 44px; font-weight: 700; margin-bottom: var(--space-6); }
 
 .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-6); }
@@ -438,8 +441,8 @@
   background: var(--color-page);
 }
 .mode-card:hover { border-color: var(--color-text-muted); }
-.mode-selected { border-color: var(--color-amber); }
-.mode-tag { font-size: 9px; letter-spacing: 0.12em; color: var(--color-amber); }
+.mode-selected { border-color: var(--color-accent); }
+.mode-tag { font-size: 9px; letter-spacing: 0.12em; color: var(--color-accent); }
 .mode-title { font-size: 18px; margin: var(--space-2) 0 var(--space-3); }
 .mode-body { color: var(--color-text-secondary); font-size: 13px; }
 .mode-code {
@@ -448,7 +451,7 @@
   padding: var(--space-2);
   border: 1px solid var(--color-border);
   font-size: 10px;
-  color: var(--color-amber);
+  color: var(--color-accent);
   word-break: break-all;
 }
 .mode-note { display: block; margin-top: var(--space-4); font-size: 11px; }
@@ -478,7 +481,7 @@
   .sidebar-foot { margin-top: 0; flex-direction: row; align-items: center; gap: var(--space-4); }
   .sidebar-user { border-top: none; margin-top: 0; padding: 0; flex-direction: row; gap: var(--space-3); }
   .nav-item { border-left: none; border-bottom: 2px solid transparent; padding: 6px var(--space-3); }
-  .nav-active { border-left-color: transparent; border-bottom-color: var(--color-amber); }
+  .nav-active { border-left-color: transparent; border-bottom-color: var(--color-accent); }
   .main { padding: var(--space-4); }
   .mode-grid { grid-template-columns: 1fr; }
   .rule-row { grid-template-columns: 1fr; }
@@ -489,3 +492,13 @@
   .metrics { grid-template-columns: 1fr; }
   .expand-row, .chain-step { grid-template-columns: 1fr; gap: var(--space-1); }
 }
+
+/* --- Sidebar chrome overrides ---------------------------------------------
+   The sidebar is Prussian Blue, so the shared wordmark, status dot and muted
+   text tokens (tuned for dark type on white) have to invert inside it. */
+.sidebar .wordmark { color: #ffffff; }
+.sidebar .status-text { color: rgba(255, 255, 255, 0.6); }
+.sidebar .dim,
+.sidebar .sidebar-user .mono { color: rgba(255, 255, 255, 0.5); }
+.sidebar .linkish { color: var(--color-accent-light); }
+.sidebar .linkish:hover { color: #ffffff; }

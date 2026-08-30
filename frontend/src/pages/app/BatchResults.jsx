@@ -15,7 +15,18 @@ import { useBatch } from "../../hooks/useBatch.js";
 import { api } from "../../lib/api.js";
 import { inr, inrCompact, label, pct } from "../../lib/format.js";
 
-const rateTone = (r) => (r >= 0.5 ? "success" : r >= 0.3 ? "amber" : "danger");
+const rateTone = (r) => (r >= 0.5 ? "success" : r >= 0.3 ? "accent" : "danger");
+
+// Recharts needs literal colours rather than CSS variables, so mirror the
+// tokens here. Keep in step with styles/tokens.css.
+const CHART = {
+  recovered: "#0d94fb",   // --color-accent: money recovered
+  atRisk: "#d8e3ef",      // --color-border: the neutral bar
+  axis: "#486382",        // --color-text-secondary
+  line: "#d8e3ef",        // --color-border
+  tooltipBg: "#ffffff",   // --color-page
+  hover: "rgba(13, 148, 251, 0.08)",
+};
 
 function statusOf(r) {
   if (r.recovered) return "recovered";
@@ -67,7 +78,7 @@ export default function BatchResults() {
 
       <div className="metrics">
         <MetricCard label="Total at risk" value={inrCompact(batch?.total_at_risk)} />
-        <MetricCard label="Total recovered" value={inrCompact(batch?.total_recovered)} tone="amber" />
+        <MetricCard label="Total recovered" value={inrCompact(batch?.total_recovered)} tone="accent" />
         <MetricCard
           label="Recovery rate"
           value={pct(batch?.recovery_rate)}
@@ -86,8 +97,8 @@ export default function BatchResults() {
                 <BarChart data={chartData} margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
                   <XAxis
                     dataKey="type"
-                    tick={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", fill: "#8b909a" }}
-                    axisLine={{ stroke: "#1e2229" }}
+                    tick={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", fill: CHART.axis }}
+                    axisLine={{ stroke: CHART.line }}
                     tickLine={false}
                     interval={0}
                     angle={-18}
@@ -95,25 +106,25 @@ export default function BatchResults() {
                     height={60}
                   />
                   <YAxis
-                    tick={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", fill: "#8b909a" }}
-                    axisLine={{ stroke: "#1e2229" }}
+                    tick={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", fill: CHART.axis }}
+                    axisLine={{ stroke: CHART.line }}
                     tickLine={false}
                     tickFormatter={(v) => inrCompact(v)}
                     width={64}
                   />
                   <Tooltip
-                    cursor={{ fill: "rgba(245,158,11,0.06)" }}
+                    cursor={{ fill: CHART.hover }}
                     contentStyle={{
-                      background: "#0a0b0f",
-                      border: "1px solid #1e2229",
+                      background: CHART.tooltipBg,
+                      border: `1px solid ${CHART.line}`,
                       borderRadius: 0,
                       fontFamily: "JetBrains Mono, monospace",
                       fontSize: 12,
                     }}
                     formatter={(v, n) => [inr(v), n]}
                   />
-                  <Bar dataKey="atRisk" name="At risk" fill="#1e2229" />
-                  <Bar dataKey="recovered" name="Recovered" fill="#f59e0b" />
+                  <Bar dataKey="atRisk" name="At risk" fill={CHART.atRisk} />
+                  <Bar dataKey="recovered" name="Recovered" fill={CHART.recovered} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -148,7 +159,7 @@ export default function BatchResults() {
                 key: "recovered",
                 header: "recovered",
                 render: (r) => (
-                  <span className={`mono ${r.recovered > 0 ? "amber" : "dim"}`}>
+                  <span className={`mono ${r.recovered > 0 ? "accent" : "dim"}`}>
                     {inr(r.recovered)}
                   </span>
                 ),
@@ -195,7 +206,7 @@ export default function BatchResults() {
                   <span className="expand-key mono dim">
                     {r.halted ? "halt reason" : "escalation"}
                   </span>
-                  <span className="amber">{r.halt_reason || r.escalation_reason}</span>
+                  <span className="accent">{r.halt_reason || r.escalation_reason}</span>
                 </div>
               )}
               <div className="expand-row">
@@ -214,13 +225,13 @@ export default function BatchResults() {
             {
               key: "payment_id",
               header: "payment_id",
-              render: (r) => <span className="mono amber">{r.payment_id}</span>,
+              render: (r) => <span className="mono accent">{r.payment_id}</span>,
             },
             {
               key: "amount",
               header: "amount",
               render: (r) => (
-                <span className={`mono ${r.recovered ? "amber" : "muted"}`}>{inr(r.amount)}</span>
+                <span className={`mono ${r.recovered ? "accent" : "muted"}`}>{inr(r.amount)}</span>
               ),
             },
             {

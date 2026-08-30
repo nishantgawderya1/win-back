@@ -129,7 +129,7 @@ export default function BatchUpload() {
 
         <button
           type="button"
-          className="btn btn-amber btn-block"
+          className="btn btn-primary btn-block"
           disabled={!file || busy}
           onClick={run}
         >

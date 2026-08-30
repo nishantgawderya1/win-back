@@ -72,7 +72,7 @@ export default function Halted() {
             {
               key: "payment_id",
               header: "payment_id",
-              render: (r) => <span className="mono amber">{r.payment_id}</span>,
+              render: (r) => <span className="mono accent">{r.payment_id}</span>,
             },
             {
               key: "action",
@@ -83,7 +83,7 @@ export default function Halted() {
               key: "halt_reason",
               header: "stopping rule fired",
               className: "reason-cell",
-              render: (r) => <span className="amber">{r.halt_reason}</span>,
+              render: (r) => <span className="accent">{r.halt_reason}</span>,
             },
             {
               key: "amount_at_risk",

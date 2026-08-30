@@ -14,7 +14,7 @@ export default function Done() {
   return (
     <>
       <ProgressDots total={3} current={3} />
-      <p className="done-word mono amber">Ready.</p>
+      <p className="done-word mono accent">Ready.</p>
 
       <p className="ob-sub">
         WinBack is connected to your Razorpay account. The first payment failure will trigger the
@@ -26,7 +26,7 @@ export default function Done() {
           : "Simulate a failure in Razorpay test-mode to watch the agent work."}
       </p>
 
-      <button type="button" className="btn btn-amber btn-block" onClick={open}>
+      <button type="button" className="btn btn-primary btn-block" onClick={open}>
         Open dashboard →
       </button>
     </>

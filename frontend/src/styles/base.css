@@ -4,7 +4,7 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { color-scheme: dark; }
+html { color-scheme: light; }
 
 body {
   margin: 0;
@@ -29,7 +29,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Mono is an identity element: every number, id, timestamp and agent name. */
 .mono { font-family: var(--font-mono); font-feature-settings: "tnum" 1; }
-.amber { color: var(--color-amber); }
+.accent { color: var(--color-accent); }
 .muted { color: var(--color-text-secondary); }
 .dim { color: var(--color-text-muted); }
 .sr-only {
@@ -71,14 +71,14 @@ input:focus, select:focus, button:focus-visible, a:focus-visible {
   border-color: var(--color-border-focus);
 }
 button:focus-visible, a:focus-visible {
-  outline: 1px solid var(--color-amber);
+  outline: 1px solid var(--color-accent);
   outline-offset: 2px;
 }
 input::placeholder { color: var(--color-text-muted); }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--color-page); }
-::-webkit-scrollbar-thumb { background: var(--color-border); }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
 
 @keyframes wb-pulse {
@@ -90,7 +90,7 @@ input::placeholder { color: var(--color-text-muted); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes wb-flash {
-  0% { border-color: var(--color-amber); background: rgba(245, 158, 11, 0.09); }
+  0% { border-color: var(--color-accent); background: var(--color-accent-wash); }
   100% { border-color: var(--color-border); background: transparent; }
 }
 

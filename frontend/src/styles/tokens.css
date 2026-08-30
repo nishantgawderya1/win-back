@@ -1,0 +1,47 @@
+/* WinBack AI — Design System v1.0 tokens.
+   Amber is the most meaningful colour here: it appears only where money is
+   involved or where the agent took a significant action. Do not spend it. */
+:root {
+  /* Backgrounds */
+  --color-page: #0a0b0f;
+  --color-surface: #111318;
+  --color-surface-deep: #0d0f14;
+
+  /* Borders */
+  --color-border: #1e2229;
+  --color-border-focus: #f59e0b;
+
+  /* Text */
+  --color-text-primary: #f0f2f5;
+  --color-text-secondary: #8b909a;
+  --color-text-muted: #4b5563;
+
+  /* Accent */
+  --color-amber: #f59e0b;
+  --color-amber-light: #fcd34d;
+  --color-amber-dark: #92400e;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, "Cascadia Mono",
+    "Consolas", monospace;
+
+  /* Radius — sharp by default. 4px is reserved for pills and badges. */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+}

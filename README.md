@@ -71,8 +71,14 @@ make backend                  # uvicorn on :8000
 make frontend                 # vite on :5173
 
 # 5. Upload a batch
-curl -X POST http://localhost:8000/batch/upload -F "file=@data/sample_batch.csv"
+curl -X POST http://localhost:8000/api/batch/upload -F "file=@data/sample_batch.csv"
+
+# 6. (optional) Refresh the landing page's real demo figures from that run
+python scripts/snapshot_demo_stats.py
 ```
+
+Open <http://localhost:5173> for the landing page; the product lives at
+`/dashboard` behind `/auth` and a three-step onboarding.
 
 ## Tests
 
@@ -82,23 +88,96 @@ make test        # pytest tests/ -v
 
 ## API surface
 
+Every HTTP route is namespaced under `/api` so the React router can own the
+bare product paths (`/batch`, `/audit`, `/halted`, `/settings`). The WebSocket
+stays at `/ws/feed`.
+
 | Method | Path | Purpose |
 |---|---|---|
-| POST | `/webhook/razorpay` | Signature-verified webhook intake |
-| POST | `/batch/upload` | Upload a CSV batch |
-| GET | `/batch/{id}/status` | Poll progress |
-| GET | `/batch/{id}/results` | Full results JSON |
-| GET | `/reports/{id}/summary` | Recovery metrics + breakdown |
-| GET | `/reports/{id}/exceptions` | Unresolved payments + reasons |
-| GET | `/audit/{payment_id}` | Audit trail for one payment |
-| GET | `/audit/{batch_id}/export` | Download audit CSV |
-| GET | `/halted/{batch_id}` | What the agent chose NOT to do |
-| GET | `/promises/pending` | Promise-to-pay records due today |
+| POST | `/api/webhook/razorpay` | Signature-verified webhook intake |
+| POST | `/api/batch/upload` | Upload a CSV batch |
+| GET | `/api/batch/{id}/status` | Poll progress |
+| GET | `/api/batch/{id}/results` | Full results JSON |
+| GET | `/api/batches` | All batch runs, newest first |
+| GET | `/api/reports/{id}/summary` | Recovery metrics + breakdown |
+| GET | `/api/reports/{id}/exceptions` | Unresolved payments for one batch |
+| GET | `/api/exceptions` | Unresolved payments across batches |
+| GET | `/api/audit` | Filterable audit search (agent, outcome, batch) |
+| GET | `/api/audit/{payment_id}` | Audit trail for one payment |
+| GET | `/api/audit/{batch_id}/export` | Download audit CSV |
+| GET | `/api/payments/{payment_id}` | One payment's record + decision chain |
+| GET | `/api/halted` | What the agent chose NOT to do |
+| GET | `/api/halted/{batch_id}` | Same, scoped to one batch |
+| GET | `/api/settings/rules` | Current stopping-rule thresholds |
+| PUT | `/api/settings/rules` | Update them (persisted, live immediately) |
+| GET | `/api/settings/connection` | Masked key id, webhook URL, model status |
+| GET | `/api/promises/pending` | Promise-to-pay records due today |
+| GET | `/api/demo/clock` | Agent clock + any demo offset |
+| POST | `/api/demo/advance` | Fast-forward the agent, then run due retries |
+| POST | `/api/demo/run-due` | Process due retries without moving the clock |
+| POST | `/api/demo/reset` | Return to real time |
 | WS | `/ws/feed` | Live agent-action stream |
+
+## Screens
+
+| Route | Screen |
+|---|---|
+| `/` | Landing page |
+| `/auth` | Sign in (demo-only — no account is created) |
+| `/onboarding/connect` · `/mode` · `/done` | Three-step first run |
+| `/dashboard` | Live metrics, agent feed, batch progress |
+| `/batch` · `/batch/{id}` | CSV upload · per-batch results |
+| `/feed` | Full-screen agent action stream |
+| `/audit` | Filterable audit trail + payment drill-down |
+| `/halted` | Actions the agent declined to take |
+| `/exceptions` | Everything that could not be recovered |
+| `/settings` | Stopping rules, connection, channels |
 
 ## Stopping rules (non-negotiable, enforced in the planner)
 
 - Max 3 retry attempts per payment
 - 2-hour cooldown between outreach
-- No outreach after 10 PM
+- No outreach after the cutoff hour
 - Payments above ₹50,000 require human approval
+
+Defaults come from `.env`. A merchant can change any threshold on the Settings
+screen; the value is persisted and applied to the very next payment without a
+restart. `backend/config_runtime.py` holds the live values — `tools/rules.py`
+and `tools/retry_timing.py` read from there, never from the frozen settings
+singleton.
+
+Every time-of-day rule is **merchant-local** (`MERCHANT_TIMEZONE`, default
+`Asia/Kolkata`), not UTC. Quiet hours run from the cutoff hour until 9 AM local,
+so a nudge cannot go out at 3 AM.
+
+## The retry ladder
+
+A retry is scheduled for the window that actually suits the failure — 9 AM
+tomorrow for a UPI timeout, the 1st of next month for insufficient funds — which
+is longer than one batch run. `backend/scheduler.py` is the worker that closes
+that loop: it polls for payments whose window has arrived and re-enters the
+graph at the planner (`resume_graph`), carrying the existing diagnosis rather
+than paying for a second LLM call. Stopping rules run again on the way through,
+so a resumed payment gets exactly the same guardrails as a fresh one.
+
+Because those windows are real, they are also unwatchable in a demo. The demo
+clock moves the agent's whole sense of time forward at once so scheduled retries
+come due:
+
+```bash
+curl -X POST http://localhost:8000/api/demo/advance   -H 'Content-Type: application/json' -d '{"days": 1}'
+```
+
+Cooldowns, quiet hours and retry windows all shift together, and nothing
+bypasses a stopping rule — advancing the clock changes *when* the agent
+reconsiders a payment, never *whether* it may act.
+
+## Diagnosis confidence
+
+The planner will not spend a payment-network retry on a diagnosis it does not
+trust (`MIN_CONFIDENCE_FOR_RETRY`); below the bar it downgrades to outreach,
+which cannot fail expensively. The rule-based fallback therefore scores itself
+by how reliable it actually is: a recognised Razorpay error code is a
+deterministic lookup (0.7), while inferring a failure from the *absence* of a
+code is a guess (0.45). A dead model no longer silently blocks every retry, and
+`/api/settings/connection` reports whether the configured model is reachable.

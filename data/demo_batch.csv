@@ -1,0 +1,11 @@
+payment_id,amount,customer_id,customer_name,customer_phone,customer_email,razorpay_error_code,prior_payments,prior_recoveries,customer_opted_out,failed_at
+pay_demo01,2499.00,cust_demo01,Aarav,+919820000000,aarav@winback-demo.in,BAD_REQUEST_PAYMENT_TIMED_OUT,9,8,False,2026-08-30T11:33:00.633927+00:00
+pay_demo02,1899.50,cust_demo02,Diya,+919820111111,diya@winback-demo.in,SERVER_ERROR_GATEWAY_TIMEOUT,6,1,False,2026-08-29T11:33:00.633927+00:00
+pay_demo03,7450.00,cust_demo03,Rohan,+919820222222,rohan@winback-demo.in,INSUFFICIENT_FUNDS,11,7,False,2026-08-30T03:33:00.633927+00:00
+pay_demo04,3200.00,cust_demo04,Ananya,+919820333333,ananya@winback-demo.in,BAD_REQUEST_PAYMENT_CARD_INSUFFICIENT_FUNDS,2,0,False,2026-08-28T15:33:00.633927+00:00
+pay_demo05,12800.00,cust_demo05,Kabir,+919820444444,kabir@winback-demo.in,BAD_REQUEST_PAYMENT_DECLINED_BY_BANK,5,2,False,2026-08-29T21:33:00.633927+00:00
+pay_demo06,4999.00,cust_demo06,Meera,+919820555555,meera@winback-demo.in,,3,2,False,2026-08-30T14:33:00.633927+00:00
+pay_demo07,88000.00,cust_demo07,Vivaan,+919820666666,vivaan@winback-demo.in,,4,3,False,2026-07-16T17:33:00.633927+00:00
+pay_demo08,899.00,cust_demo08,Isha,+919820777777,isha@winback-demo.in,SUBSCRIPTION_CHARGE_FAILED,14,9,False,2026-08-30T05:33:00.633927+00:00
+pay_demo09,74500.00,cust_demo09,Arjun,+919820888888,arjun@winback-demo.in,BAD_REQUEST_PAYMENT_TIMED_OUT,7,5,False,2026-08-30T09:33:00.633927+00:00
+pay_demo10,5600.00,cust_demo10,Priya,+919820999999,priya@winback-demo.in,INSUFFICIENT_FUNDS,8,4,True,2026-08-29T15:33:00.633927+00:00

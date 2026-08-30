@@ -7,18 +7,25 @@
 """
 from __future__ import annotations
 
-from datetime import datetime
-
+from backend.db.repository import add_promise
+from backend.db.session import async_session_factory
 from backend.graph.state import InterventionType, WinBackState
-from backend.tools import comms, razorpay
+from backend.tools import clock, comms, razorpay
 from backend.tools.audit import log_action
+
+OUTREACH_INTERVENTIONS = (
+    InterventionType.SEND_PAYMENT_LINK,
+    InterventionType.SMS_HINGLISH,
+    InterventionType.WHATSAPP_NUDGE,
+    InterventionType.EMAIL_RECOVERY,
+)
 
 
 async def executor_node(state: WinBackState) -> WinBackState:
     intervention = state.intervention
     await log_action(state, "executor", intervention.value if intervention else "noop", "Executing planned intervention.")
 
-    now = datetime.utcnow()
+    now = clock.utc_now()
     updates: dict = {
         "attempt_count": state.attempt_count + 1,
         "last_attempted_at": now,
@@ -36,15 +43,28 @@ async def executor_node(state: WinBackState) -> WinBackState:
             outcome = "retry_failed"
         detail = f"Retry (idempotency {result['idempotency_key']}) -> {outcome}."
 
-    elif intervention in (
-        InterventionType.SEND_PAYMENT_LINK,
-        InterventionType.SMS_HINGLISH,
-        InterventionType.WHATSAPP_NUDGE,
-        InterventionType.EMAIL_RECOVERY,
-    ):
+    elif intervention in OUTREACH_INTERVENTIONS:
         link = await razorpay.create_payment_link(state.payment_id, state.amount)
         detail = await _send_outreach(state, intervention, link)
         outcome = "outreach_sent"
+
+        # Outreach can draw a reply. A customer who names a date changes what
+        # the agent should do next: chase the promise, not the cooldown.
+        promised = comms.simulate_promise_reply(
+            state.payment_id, state.attempt_count, state.customer_recovery_score or 0.5
+        )
+        if promised is not None:
+            updates["promise_to_pay_date"] = promised
+            async with async_session_factory() as db:
+                await add_promise(
+                    db,
+                    payment_id=state.payment_id,
+                    customer_id=state.customer_id,
+                    amount=state.amount,
+                    promised_date=clock.to_db(promised),
+                )
+            detail += f" Customer promised to pay by {promised.date().isoformat()}."
+            outcome = "promise_received"
 
     else:
         detail = f"No executable action for intervention {intervention}."

@@ -1,71 +1,76 @@
 {
-  "batch_id": "batch_11e12d80",
-  "captured_at": "2026-08-30T05:57:23+00:00",
+  "batch_id": "batch_127a770f",
+  "captured_at": "2026-08-30T10:39:05+00:00",
   "record_count": 75,
-  "total_at_risk": 1948250.76,
-  "total_recovered": 684856.44,
-  "recovery_rate": 0.3515,
-  "recovered_count": 26,
+  "total_at_risk": 2066226.3,
+  "total_recovered": 474114.65,
+  "recovery_rate": 0.2295,
+  "recovered_count": 16,
   "escalated_count": 9,
-  "halted_count": 1,
-  "unresolved_count": 49,
-  "total_unrecovered": 1263394.32,
-  "failure_type_count": 5,
+  "halted_count": 3,
+  "unresolved_count": 59,
+  "total_unrecovered": 1592111.65,
+  "failure_type_count": 6,
   "by_failure_type": {
+    "upi_timeout": {
+      "count": 21,
+      "at_risk": 631788.1,
+      "recovered": 300697.26
+    },
     "card_bank_block": {
       "count": 9,
-      "at_risk": 219881.78,
+      "at_risk": 220065.66,
       "recovered": 0.0
     },
-    "subscription_failed": {
-      "count": 7,
-      "at_risk": 164198.05,
+    "invoice_overdue": {
+      "count": 4,
+      "at_risk": 55496.75,
+      "recovered": 0.0
+    },
+    "checkout_abandoned": {
+      "count": 11,
+      "at_risk": 299220.57,
       "recovered": 0.0
     },
     "card_insufficient": {
-      "count": 20,
-      "at_risk": 538383.15,
-      "recovered": 286289.51
-    },
-    "upi_timeout": {
-      "count": 18,
-      "at_risk": 510436.13,
-      "recovered": 398566.93
-    },
-    "checkout_abandoned": {
       "count": 21,
-      "at_risk": 515351.65,
+      "at_risk": 520945.15,
+      "recovered": 173417.39
+    },
+    "subscription_failed": {
+      "count": 9,
+      "at_risk": 338710.07,
       "recovered": 0.0
     }
   },
   "exception_reasons": {
-    "retried_without_success": 39,
+    "retried_without_success": 47,
     "escalated_to_human": 9,
-    "stopping_rule_halted": 1
+    "stopping_rule_halted": 3
   },
   "sample_exceptions": [
     {
-      "payment_id": "pay_c79750b8c62a",
-      "amount": 25422.18,
+      "payment_id": "pay_ab28a30c7238",
+      "amount": 8842.99,
+      "failure_type": "upi_timeout",
+      "reason": "Unresolved after 1 attempt(s)."
+    },
+    {
+      "payment_id": "pay_d28934674c6a",
+      "amount": 13870.91,
       "failure_type": "card_insufficient",
       "reason": "Unresolved after 1 attempt(s)."
     },
     {
-      "payment_id": "pay_3b8b1fc9d2f0",
-      "amount": 41794.83,
-      "failure_type": "checkout_abandoned",
-      "reason": "Unresolved after 1 attempt(s)."
-    },
-    {
-      "payment_id": "pay_a6c0a91c2466",
-      "amount": 18420.92,
-      "failure_type": "upi_timeout",
-      "reason": "Unresolved after 1 attempt(s)."
+      "payment_id": "pay_f19d544ca35d",
+      "amount": 23936.64,
+      "failure_type": "card_bank_block",
+      "reason": "Hard bank block \u2014 automated retries are pointless. Hand to human."
     }
   ],
-  "diagnosis_source": "rules_fallback",
+  "diagnosis_source": "nemotron",
   "diagnosis_counts": {
-    "nemotron_ok": 0,
-    "fallback_rules": 75
+    "nemotron_ok": 74,
+    "fallback_rules": 1
   }
 }

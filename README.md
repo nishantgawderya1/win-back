@@ -12,10 +12,32 @@ the decisions to do nothing.**
 ## LLM: NVIDIA Nemotron
 
 AI judgment is used in exactly one place — the **diagnosis** node — via
-**NVIDIA Nemotron**, served through NVIDIA's OpenAI-compatible API
-(`https://integrate.api.nvidia.com/v1`). Everywhere else is deterministic
-logic. If Nemotron is unavailable, diagnosis falls back to rule-based
-classification with a lower confidence score and the pipeline continues.
+**NVIDIA Nemotron** (`nemotron-3-super-120b-a12b`), served through NVIDIA's
+OpenAI-compatible API. Everywhere else is deterministic logic. If Nemotron is
+unavailable, diagnosis falls back to rule-based classification, scored by how
+much that fallback deserves to be trusted, and the pipeline continues.
+
+Nemotron reasons before answering unless told not to. `LLM_ENABLE_THINKING`
+controls it: off (the default) a diagnosis takes ~3.3s, on it takes ~10.4s and
+the model's full chain is folded into the audit trail. Payments are diagnosed
+concurrently (`BATCH_CONCURRENCY`), so a 75-record batch takes ~90s rather than
+four minutes.
+
+## What is real and what is simulated
+
+Being precise about this, because it is the first thing worth checking:
+
+| | |
+|---|---|
+| **Real** | Diagnosis (live Nemotron calls) |
+| **Real** | Razorpay **payment links** — created through `/payment_links` in test mode, genuinely payable |
+| **Real** | Webhook intake, HMAC-SHA256 signature verification, event de-duplication |
+| **Real** | Recovery confirmation — `payment_link.paid` marks the payment recovered against the record the agent was chasing |
+| Simulated | Card/UPI **retry** outcomes. Razorpay has no API that re-charges a failed payment; a failed authorization cannot be replayed, and genuinely recovering it needs fresh authorization from the customer, which is what the payment link is for |
+| Simulated | SMS / WhatsApp / email delivery, and the inbound "promise to pay" reply |
+
+Without credentials everything above degrades to simulation, so the demo runs
+on a clean checkout.
 
 Get a key at [build.nvidia.com](https://build.nvidia.com) → pick a Nemotron
 model → **Get API Key**.

@@ -120,6 +120,8 @@ async def batch_results(batch_id: str, db: AsyncSession = Depends(get_db)) -> di
                 "escalated": r.escalated,
                 "escalation_reason": r.escalation_reason,
                 "customer_recovery_score": r.customer_recovery_score,
+                "confidence": r.confidence,
+                "agent_reasoning": r.agent_reasoning or [],
             }
             for r in records
         ],

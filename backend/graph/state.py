@@ -11,6 +11,8 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from backend.tools.clock import utc_now
+
 
 class FailureType(str, Enum):
     UPI_TIMEOUT = "upi_timeout"                  # BAD_REQUEST_PAYMENT_TIMED_OUT
@@ -36,7 +38,7 @@ class AuditEntry(BaseModel):
     action: str
     reason: str
     outcome: str | None = None
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=utc_now)
 
 
 class WinBackState(BaseModel):

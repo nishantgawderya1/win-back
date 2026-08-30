@@ -102,6 +102,27 @@ python scripts/snapshot_demo_stats.py
 Open <http://localhost:5173> for the landing page; the product lives at
 `/dashboard` behind `/auth` and a three-step onboarding.
 
+## Database
+
+SQLAlchemy 2.0 async ORM over SQLite by default — one gitignored `winback.db`,
+no setup. Six tables: batch runs, payment records, audit log, halted actions,
+promises to pay, and the saved stopping rules. The schema is created at startup,
+and columns added to a model later are reconciled in place, because the project
+carries no migration tool.
+
+It runs on **Supabase / Postgres** unchanged — set `DATABASE_URL` to the asyncpg
+form and the same startup path builds the schema there. Two things to know:
+
+- **Percent-encode the password.** A literal `@` is read as the host separator,
+  so a password like `p@ssw0rd` has to be written `p%40ssw0rd`.
+- **`db.PROJECT.supabase.co` resolves IPv6-only.** On an IPv4-only network or
+  host, use the session pooler and add `?prepared_statement_cache_size=0`, since
+  pgbouncer cannot hold prepared statements across connections.
+
+Measured on a 20-record batch: 30s against Supabase versus 25s against local
+SQLite. The diagnosis call dominates each payment, so the extra network hops
+cost less than the round trips suggest.
+
 ## Tests
 
 ```bash

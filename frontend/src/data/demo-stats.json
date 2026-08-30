@@ -1,21 +1,26 @@
 {
-  "batch_id": "batch_7d9c3678",
-  "captured_at": "2026-08-30T11:34:03+00:00",
+  "batch_id": "batch_3964b0f2",
+  "captured_at": "2026-08-30T11:56:45+00:00",
   "record_count": 75,
   "total_at_risk": 2066226.3,
-  "total_recovered": 760916.96,
-  "recovery_rate": 0.3683,
+  "total_recovered": 742301.69,
+  "recovery_rate": 0.3593,
   "recovered_count": 29,
   "escalated_count": 9,
   "halted_count": 3,
   "unresolved_count": 46,
-  "total_unrecovered": 1305309.34,
+  "total_unrecovered": 1307640.51,
   "failure_type_count": 6,
   "by_failure_type": {
-    "upi_timeout": {
+    "checkout_abandoned": {
+      "count": 11,
+      "at_risk": 299220.57,
+      "recovered": 0.0
+    },
+    "card_insufficient": {
       "count": 21,
-      "at_risk": 631788.1,
-      "recovered": 523145.78
+      "at_risk": 520945.15,
+      "recovered": 235440.01
     },
     "card_bank_block": {
       "count": 9,
@@ -27,15 +32,10 @@
       "at_risk": 55496.75,
       "recovered": 0.0
     },
-    "checkout_abandoned": {
-      "count": 11,
-      "at_risk": 299220.57,
-      "recovered": 0.0
-    },
-    "card_insufficient": {
+    "upi_timeout": {
       "count": 21,
-      "at_risk": 520945.15,
-      "recovered": 237771.18
+      "at_risk": 631788.1,
+      "recovered": 523145.78
     },
     "subscription_failed": {
       "count": 9,
@@ -50,62 +50,60 @@
   },
   "sample_exceptions": [
     {
-      "payment_id": "pay_d28934674c6a",
-      "amount": 13870.91,
-      "failure_type": "card_insufficient",
+      "payment_id": "pay_b94a638a8e4e",
+      "amount": 374.94,
+      "failure_type": "invoice_overdue",
       "reason": "Unresolved after 3 attempt(s)."
     },
     {
-      "payment_id": "pay_a0c96f7d4104",
-      "amount": 42027.91,
-      "failure_type": "card_insufficient",
+      "payment_id": "pay_407a13bff174",
+      "amount": 8543.5,
+      "failure_type": "invoice_overdue",
       "reason": "Unresolved after 3 attempt(s)."
     },
     {
-      "payment_id": "pay_ad6ca160053c",
-      "amount": 42422.45,
-      "failure_type": "card_insufficient",
+      "payment_id": "pay_322da88e3009",
+      "amount": 32567.35,
+      "failure_type": "invoice_overdue",
       "reason": "Unresolved after 3 attempt(s)."
     }
   ],
   "diagnosis_source": "nemotron",
   "diagnosis_counts": {
-    "nemotron_ok": 74,
-    "fallback_rules": 1
+    "nemotron_ok": 67,
+    "fallback_rules": 8
   },
   "attempt_ladder": {
     "0": 12,
     "1": 17,
-    "2": 9,
-    "3": 37
+    "2": 19,
+    "3": 27
   },
   "agent_actions": {
-    "planner": 412,
-    "reporter": 408,
-    "monitor": 388,
-    "executor": 388,
-    "diagnosis": 150,
+    "planner": 493,
+    "reporter": 487,
+    "executor": 467,
+    "monitor": 466,
+    "diagnosis": 151,
     "detection": 150,
     "escalate": 9,
     "halt": 3
   },
   "showcase_diagnosis": {
-    "payment_id": "pay_0f82dc32577c",
-    "amount": 15179.02,
-    "failure_type": "card_insufficient",
-    "root_cause": "The customer's card had insufficient funds to cover the transaction amount of INR 15,179.02 at the time of payment attempt.",
-    "confidence": 0.95,
-    "customer_recovery_score": 0.35,
-    "intervention": "sms_hinglish",
+    "payment_id": "pay_44c43b984c18",
+    "amount": 49236.01,
+    "failure_type": "card_bank_block",
+    "root_cause": "The payment failed because the customer's card has expired, as indicated by the Razorpay error code BAD_REQUEST_PAYMENT_CARD_EXPIRED.",
+    "confidence": 0.98,
+    "customer_recovery_score": 0.75,
+    "intervention": "escalate_human",
     "reasoning": [
-      "Error code INSUFFICIENT_FUNDS directly indicates lack of available balance or credit limit.",
-      "Transaction occurred at 18:00 IST, a typical evening time when discretionary spending may be higher but funds could be low after daily expenses.",
-      "Customer has only 1 prior payment and 0 prior recoveries, indicating limited payment history and no evidence of successful recovery after failure.",
-      "Low prior payment count suggests either new customer or infrequent transactor, reducing confidence in ability to recover funds via retry.",
-      "Amount is relatively high (INR 15k+), increasing likelihood that it exceeds available balance or credit limit.",
-      "Medium urgency suggests the transaction is important but not time-critical, allowing for recovery attempts.",
-      "No indication of technical issues (e.g., network, 3DS failure) \u2014 pure fund availability issue.",
-      "Recovery depends on customer replenishing funds or increasing limit, which is uncertain without behavioral history."
+      "Error code BAD_REQUEST_PAYMENT_CARD_EXPIRED directly indicates card expiration.",
+      "Card expiration is a common, non-fraudulent failure mode with high recovery potential.",
+      "Customer has made 1 prior payment and successfully recovered 1 prior failed payment, indicating willingness to pay and responsiveness to intervention.",
+      "Transaction occurred at 6 AM IST, a low-traffic hour, reducing likelihood of transient network or bank-side issues.",
+      "High urgency flag suggests the transaction is time-sensitive, increasing motivation for customer to resolve promptly.",
+      "No evidence of insufficient funds, fraud, or technical gateway issues \u2014 root cause is isolated to card validity."
     ]
   }
 }

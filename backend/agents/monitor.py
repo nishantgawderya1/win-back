@@ -5,9 +5,8 @@ the observed outcome and any promise-to-pay follow-up trigger.
 """
 from __future__ import annotations
 
-from datetime import datetime
-
 from backend.graph.state import WinBackState
+from backend.tools import clock
 from backend.tools.audit import log_action
 
 
@@ -17,7 +16,10 @@ async def monitor_node(state: WinBackState) -> WinBackState:
     if state.recovered:
         outcome = "recovered"
         reason = f"Payment recovered — INR {state.recovered_amount:.0f}."
-    elif state.promise_to_pay_date and state.promise_to_pay_date.date() <= datetime.utcnow().date():
+    elif (
+        state.promise_to_pay_date
+        and clock.to_local(state.promise_to_pay_date).date() <= clock.local_now().date()
+    ):
         outcome = "promise_due"
         reason = "Promise-to-pay date reached; follow-up triggered."
     else:

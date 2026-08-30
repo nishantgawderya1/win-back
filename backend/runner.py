@@ -6,12 +6,11 @@ FastAPI background task from POST /batch/upload.
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
-
 from backend.db.repository import bump_batch_progress, finalize_batch, list_payment_records
 from backend.db.session import async_session_factory
 from backend.graph.graph import app_graph
 from backend.graph.state import WinBackState
+from backend.tools import clock
 
 
 async def run_one(state: WinBackState) -> WinBackState:
@@ -33,14 +32,14 @@ async def run_batch(batch_id: str, states: list[WinBackState]) -> None:
                 await bump_batch_progress(db, batch_id)
         await asyncio.sleep(0)  # yield to the event loop / WS broadcasts
 
-    await _finalize(batch_id)
+    await refresh_batch_totals(batch_id)
 
 
-async def _finalize(batch_id: str) -> None:
+async def refresh_batch_totals(batch_id: str) -> None:
     async with async_session_factory() as db:
         records = await list_payment_records(db, batch_id)
         total_at_risk = sum(r.amount for r in records)
         total_recovered = sum(r.recovered_amount or 0.0 for r in records if r.recovered)
         rate = (total_recovered / total_at_risk) if total_at_risk else 0.0
         await finalize_batch(db, batch_id, total_at_risk, total_recovered, rate)
-    print(f"[runner] batch {batch_id} complete at {datetime.utcnow().isoformat()}")
+    print(f"[runner] batch {batch_id} complete at {clock.utc_now().isoformat()}")

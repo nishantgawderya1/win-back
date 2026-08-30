@@ -105,3 +105,38 @@ def _parse_json(content: str) -> dict:
         "customer_recovery_score": float(data.get("customer_recovery_score", 0.5)),
         "reasoning": [str(r) for r in data.get("reasoning", [])],
     }
+
+
+async def check_model_available() -> dict:
+    """Verify the configured model still exists on the endpoint.
+
+    The previous default reached end of life and every diagnosis silently took
+    the rule-based fallback — the pipeline kept running, the audit trail kept
+    saying `fallback_rules`, and nothing announced that the AI had stopped
+    participating. Called at startup so a dead model is loud, and surfaced on
+    /api/settings/connection so the UI can say so too.
+
+    The model list is readable without credentials, so this works even before a
+    key is configured.
+    """
+    try:
+        listing = await _client.models.list()
+        available = {m.id for m in listing.data}
+    except Exception as exc:  # noqa: BLE001 — never block startup on this
+        return {
+            "ok": False,
+            "reason": f"could not reach {settings.nvidia_base_url} ({type(exc).__name__})",
+            "model": settings.nemotron_model,
+            "alternatives": [],
+        }
+
+    if settings.nemotron_model in available:
+        return {"ok": True, "reason": None, "model": settings.nemotron_model, "alternatives": []}
+
+    nearby = sorted(m for m in available if "nemotron" in m.lower())
+    return {
+        "ok": False,
+        "reason": f"model '{settings.nemotron_model}' is not offered by the endpoint",
+        "model": settings.nemotron_model,
+        "alternatives": nearby[:8],
+    }

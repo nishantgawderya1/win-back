@@ -32,13 +32,11 @@ const CAPABILITIES = [
     title: "Full audit trail",
     body:
       "Every action logged with who acted, what they did, why, and what happened. Exportable as CSV. Built for an external financial auditor, not just an internal dashboard.",
-    accent: true,
   },
   {
     title: "Honest exception report",
     body:
       "WinBack shows what it could not recover and exactly why — hard bank block, customer opted out, retry limit reached. No cherry-picked success metric.",
-    accent: true,
   },
 ];
 
@@ -416,8 +414,11 @@ export default function Landing() {
           <Reveal>
             <p className="eyebrow">Capabilities</p>
             <div className="cap-grid">
-              {CAPABILITIES.map((c) => (
-                <article className={`cap ${c.accent ? "cap-accent" : ""}`} key={c.title}>
+              {CAPABILITIES.map((c, i) => (
+                <article className="cap" key={c.title}>
+                  <span className="cap-n" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   <h3 className="cap-title">{c.title}</h3>
                   <p className="cap-body">{c.body}</p>
                 </article>

@@ -219,26 +219,39 @@
 .chain-steps {
   list-style: none;
   margin: 0;
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 .chain-steps li {
   display: grid;
-  grid-template-columns: 24px 1fr;
+  grid-template-columns: 22px 1fr;
   gap: var(--space-3);
-  font-size: 13px;
+  font-size: 13.5px;
+  line-height: 1.6;
   color: var(--color-text-secondary);
-  transition: opacity 350ms ease, transform 350ms ease;
+  padding: 2px var(--space-2) 2px 0;
+  border-left: 2px solid transparent;
+  padding-left: var(--space-3);
+  margin-left: calc(var(--space-3) * -1);
+  transition: color 300ms ease, background-color 300ms ease,
+    border-color 300ms ease;
 }
-.chain-step-out { opacity: 0.25; transform: translateY(2px); }
-.chain-step-in { opacity: 1; transform: none; }
+/* Read but not current: full contrast, no marker. */
+.chain-step-seen { color: var(--color-text-primary); }
+/* Where the agent is right now. */
+.chain-step-active {
+  border-left-color: var(--color-accent);
+  background: var(--color-accent-wash-soft);
+}
 .chain-index {
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   font-size: 10px;
-  padding-top: 3px;
+  padding-top: 4px;
+  transition: color 300ms ease;
 }
+.chain-step-active .chain-index { color: var(--color-accent); }
 .chain-verdict {
   border-top: 1px solid var(--color-border);
   padding: var(--space-4);
@@ -274,19 +287,22 @@
   display: grid;
   grid-template-columns: repeat(3, 96px) 1fr;
   gap: var(--space-6);
-  align-items: end;
+  align-items: stretch;
   margin-top: var(--space-8);
   border: 1px solid var(--color-border);
   background: var(--color-page);
   padding: var(--space-8) var(--space-6) var(--space-6);
 }
+/* Fixed rows rather than a flex column: the third label wraps to two lines,
+   and under content-driven heights that pushed its bar off the shared
+   baseline. Every step now reserves the same track, number and label space. */
 .ladder-step {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 132px auto 34px;
   gap: var(--space-2);
+  align-content: start;
 }
 .ladder-bar-track {
-  height: 132px;
   display: flex;
   align-items: flex-end;
   border-bottom: 1px solid var(--color-border);
@@ -301,6 +317,7 @@
 .ladder-n { font-size: 24px; font-weight: 700; }
 .ladder-label {
   font-size: 10px;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
@@ -308,6 +325,7 @@
 .ladder-copy {
   align-self: center;
   max-width: 46ch;
+  padding-bottom: var(--space-8);
 }
 .ladder-copy p {
   color: var(--color-text-secondary);

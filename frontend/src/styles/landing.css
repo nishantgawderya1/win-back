@@ -103,6 +103,10 @@
   display: grid;
   grid-template-columns: 55fr 45fr;
   gap: var(--space-12);
+  /* The columns are decoupled by the feed's fixed height, not by this: a
+     panel that grew as rows arrived changed the grid row height, which
+     re-centred the headline on every tick. With the height pinned the row is
+     stable, so centring is safe and reads better on a tall viewport. */
   align-items: center;
   min-height: calc(100vh - 60px);
 }
@@ -133,7 +137,9 @@
   background: var(--color-surface);
   display: flex;
   flex-direction: column;
-  min-height: 460px;
+  /* Fixed, not min-height. The scripted feed grows as rows arrive; a panel
+     that resized would push the hero around on every tick. */
+  height: 470px;
 }
 .lfeed-head {
   display: flex;
@@ -151,7 +157,11 @@
   align-items: center;
   gap: var(--space-2);
 }
-.lfeed-body { flex: 1; padding: var(--space-2) 0; }
+.lfeed-body {
+  flex: 1;
+  padding: var(--space-2) 0;
+  overflow: hidden;  /* rows appear inside a stable box */
+}
 .lfeed-row {
   display: grid;
   grid-template-columns: 62px 74px 12px auto 1fr;
@@ -264,13 +274,38 @@
 }
 .cap {
   border: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-border-strong);
   padding: var(--space-6);
   transition: border-color 150ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-page);
 }
 .cap:hover { border-color: var(--color-accent); }
-.cap-accent { border-left: 2px solid rgba(13, 148, 251, 0.6); }
-.cap-title { font-size: 16px; margin-bottom: var(--space-3); }
-.cap-body { color: var(--color-text-secondary); font-size: 13px; }
+.cap:hover .cap-n { color: var(--color-accent); }
+.cap-n {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+  transition: color 150ms ease;
+}
+.cap-title {
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  /* Two lines reserved so every title block is the same height and the body
+     copy starts on one line across the whole grid. */
+  min-height: 2.6em;
+  display: flex;
+  align-items: flex-start;
+}
+.cap-body {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.65;
+}
 
 /* --- The honest section --- */
 .honest { background: var(--color-surface); max-width: none; }

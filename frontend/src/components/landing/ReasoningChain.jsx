@@ -46,9 +46,17 @@ export default function ReasoningChain({ diagnosis }) {
         </span>
       </div>
 
+      {/* Every step stays legible. The walk marks where the agent is, rather
+          than hiding what it has not reached — the reasoning is the content,
+          so dimming it to near-invisible defeated the point of showing it. */}
       <ol className="chain-steps">
         {steps.map((step, i) => (
-          <li key={i} className={i < shown ? "chain-step-in" : "chain-step-out"}>
+          <li
+            key={i}
+            className={`chain-step ${i === shown - 1 ? "chain-step-active" : ""} ${
+              i < shown ? "chain-step-seen" : ""
+            }`}
+          >
             <span className="mono chain-index">{String(i + 1).padStart(2, "0")}</span>
             <span>{step}</span>
           </li>

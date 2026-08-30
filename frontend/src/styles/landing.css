@@ -26,20 +26,6 @@
   justify-content: space-between;
   gap: var(--space-6);
 }
-.wordmark {
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.02em;
-  color: var(--color-text-primary);
-}
-.wordmark-ai {
-  color: var(--color-accent);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  vertical-align: super;
-  margin-left: 3px;
-  letter-spacing: 0;
-}
 .lnav-links {
   display: flex;
   align-items: center;

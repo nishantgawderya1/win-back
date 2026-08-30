@@ -1,0 +1,50 @@
+/* WinBack.AI lockup.
+   The mark and the wordmark share a baseline and scale together — Logo passes
+   the word size as a fraction of the mark size, so one `size` prop drives the
+   whole lockup. */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.logo-mark {
+  display: block;
+  flex: none;
+}
+
+.logo-word {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--color-text-primary);
+}
+
+/* The dot is the one piece of the wordmark that stays accent in both variants. */
+.logo-dot {
+  color: var(--color-accent);
+}
+
+.logo-ai {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* On a dark ground — the product sidebar, not a dark theme. */
+.logo-dark .logo-word {
+  color: #ffffff;
+}
+.logo-dark .logo-dot {
+  color: #4da3ff;
+}
+
+.lnav-brand {
+  display: inline-flex;
+  align-items: center;
+}
+.lnav-brand:hover .logo-word {
+  color: var(--color-accent);
+}

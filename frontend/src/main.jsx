@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import AppRoutes from "./routes.jsx";
 import "./styles/base.css";
+import "./styles/logo.css";
 import "./styles/landing.css";
 import "./styles/agentic.css";
 import "./styles/app.css";

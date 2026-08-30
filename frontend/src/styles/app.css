@@ -496,8 +496,7 @@
 /* --- Sidebar chrome overrides ---------------------------------------------
    The sidebar is Prussian Blue, so the shared wordmark, status dot and muted
    text tokens (tuned for dark type on white) have to invert inside it. */
-.sidebar .wordmark { color: #ffffff; }
-.sidebar .status-text { color: rgba(255, 255, 255, 0.6); }
+.sidebar .sidebar .status-text { color: rgba(255, 255, 255, 0.6); }
 .sidebar .dim,
 .sidebar .sidebar-user .mono { color: rgba(255, 255, 255, 0.5); }
 .sidebar .linkish { color: var(--color-accent-light); }

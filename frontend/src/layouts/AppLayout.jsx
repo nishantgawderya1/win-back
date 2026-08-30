@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useWebSocket } from "../hooks/useWebSocket.js";
+import Logo from "../components/Logo.jsx";
 import { StatusDot } from "../components/common/index.jsx";
 
 const NAV = [
@@ -23,9 +24,7 @@ export default function AppLayout() {
     <div className="shell">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <span className="wordmark">
-            WinBack<span className="wordmark-ai">AI</span>
-          </span>
+          <Logo size={26} variant="dark" />
           <StatusDot on={connected} />
         </div>
         <nav className="sidebar-nav">

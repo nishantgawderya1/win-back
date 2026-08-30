@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import Logo from "../components/Logo.jsx";
 
 export default function Auth() {
   const { signIn } = useAuth();
@@ -17,9 +18,7 @@ export default function Auth() {
   return (
     <div className="auth-card">
       <div className="auth-brand">
-        <span className="wordmark">
-          WinBack<span className="wordmark-ai">AI</span>
-        </span>
+        <Logo size={28} />
         <span className="dot dot-on" aria-hidden="true" />
       </div>
 

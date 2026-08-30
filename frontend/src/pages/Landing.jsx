@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Logo from "../components/Logo.jsx";
 import LandingFeed from "../components/feed/LandingFeed.jsx";
 import AgentGraph from "../components/landing/AgentGraph.jsx";
 import ReasoningChain from "../components/landing/ReasoningChain.jsx";
@@ -132,8 +133,8 @@ export default function Landing() {
     <div className="landing">
       <header className={`lnav ${scrolled ? "lnav-scrolled" : ""}`}>
         <div className="lnav-inner">
-          <Link to="/" className="wordmark">
-            WinBack<span className="wordmark-ai">AI</span>
+          <Link to="/" className="lnav-brand" aria-label="WinBack.AI home">
+            <Logo size={30} />
           </Link>
           <nav className={`lnav-links ${menuOpen ? "lnav-open" : ""}`}>
             <a href="#agent" onClick={() => setMenuOpen(false)}>

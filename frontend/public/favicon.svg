@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 116" width="128" height="116">
+  <title>WinBack.AI</title>
+  <!-- The mark alone, nudged down so it sits optically centred in a square tab
+       icon. Matches components/Logo.jsx; keep the two in step. -->
+  <g transform="translate(0 6)">
+    <path
+      d="M12 26 L38 86 L60 30 L82 76 L106 32"
+      fill="none"
+      stroke="#2f80f0"
+      stroke-width="17"
+      stroke-linejoin="miter"
+    />
+    <path d="M118 10 L118.8 40 L92.4 25.6 Z" fill="#2f80f0" />
+  </g>
+</svg>

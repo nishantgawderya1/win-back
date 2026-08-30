@@ -9,12 +9,31 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from sqlalchemy import inspect, text
+from sqlalchemy import event, inspect, text
 
 from backend.config import settings
 from backend.db.models import Base
 
 engine = create_async_engine(settings.database_url, echo=False, future=True)
+
+
+@event.listens_for(engine.sync_engine, "connect")
+def _sqlite_pragmas(dbapi_connection, _record) -> None:
+    """WAL + a write timeout, so concurrent batch workers queue instead of failing.
+
+    The batch runs payments in parallel and each one opens its own short-lived
+    session. Under SQLite's default rollback journal a second writer fails
+    immediately with "database is locked"; WAL lets readers continue during a
+    write, and busy_timeout makes a contending writer wait its turn rather than
+    raise. No-op for non-SQLite backends.
+    """
+    if not settings.database_url.startswith("sqlite"):
+        return
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.execute("PRAGMA busy_timeout=10000")
+    cursor.execute("PRAGMA synchronous=NORMAL")
+    cursor.close()
 
 async_session_factory = async_sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False

@@ -6,6 +6,7 @@ FastAPI background task from POST /batch/upload.
 from __future__ import annotations
 
 import asyncio
+from backend.config import settings
 from backend.db.repository import bump_batch_progress, finalize_batch, list_payment_records
 from backend.db.session import async_session_factory
 from backend.graph.graph import app_graph
@@ -21,17 +22,27 @@ async def run_one(state: WinBackState) -> WinBackState:
 
 
 async def run_batch(batch_id: str, states: list[WinBackState]) -> None:
-    """Process every record, updating progress, then finalize batch metrics."""
-    for state in states:
-        try:
-            await run_one(state)
-        except Exception as exc:  # noqa: BLE001 — one bad record shouldn't kill the batch
-            print(f"[runner] payment {state.payment_id} failed: {exc!r}")
-        finally:
-            async with async_session_factory() as db:
-                await bump_batch_progress(db, batch_id)
-        await asyncio.sleep(0)  # yield to the event loop / WS broadcasts
+    """Process every record, updating progress, then finalize batch metrics.
 
+    Payments are independent and each one spends most of its time waiting on
+    the diagnosis call, so they run concurrently. The semaphore bounds how many
+    LLM calls and SQLite writers are in flight at once — unbounded, a large
+    batch would open a connection per record and start contending on the
+    database.
+    """
+    semaphore = asyncio.Semaphore(settings.batch_concurrency)
+
+    async def process(state: WinBackState) -> None:
+        async with semaphore:
+            try:
+                await run_one(state)
+            except Exception as exc:  # noqa: BLE001 — one bad record shouldn't kill the batch
+                print(f"[runner] payment {state.payment_id} failed: {exc!r}")
+            finally:
+                async with async_session_factory() as db:
+                    await bump_batch_progress(db, batch_id)
+
+    await asyncio.gather(*(process(s) for s in states))
     await refresh_batch_totals(batch_id)
 
 

@@ -1,21 +1,27 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { isSupabaseAuth, supabase } from "../lib/supabase.js";
 
 /**
- * Demo-only session.
+ * Session state, backed by Supabase when it is configured.
  *
- * There is no users table, no password hashing and no server session behind
- * this — it exists so the product can be walked end to end. Any credentials
- * are accepted.
+ * Two modes, and the UI is told which is in play rather than pretending:
  *
- * The Razorpay key SECRET is deliberately never stored. It is accepted by the
- * onboarding form, used to mark the account connected, and then dropped. Only
- * the masked key id survives, which is all any screen needs to display.
+ *   real  — Supabase email/password. The access token is attached to every API
+ *           call and the backend verifies it, so signing out actually revokes
+ *           access rather than hiding a button.
+ *   demo  — no credentials configured. Any input is accepted and the session
+ *           lives in localStorage. The API is open in this mode; the app says
+ *           so instead of implying a protection that is not there.
+ *
+ * The Razorpay key secret is never stored in either mode. Onboarding accepts
+ * it, uses it to mark the account connected, and drops it — only the masked
+ * key id is kept, which is all any screen displays.
  */
 const KEY = "winback.session";
 
 const AuthContext = createContext(null);
 
-function read() {
+function readLocal() {
   try {
     return JSON.parse(localStorage.getItem(KEY) || "null");
   } catch {
@@ -23,7 +29,7 @@ function read() {
   }
 }
 
-function write(session) {
+function writeLocal(session) {
   try {
     if (session) localStorage.setItem(KEY, JSON.stringify(session));
     else localStorage.removeItem(KEY);
@@ -33,40 +39,100 @@ function write(session) {
 }
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(read);
+  // Profile data (onboarding progress, masked key id) is ours either way; the
+  // identity underneath it is Supabase's when configured.
+  const [profile, setProfile] = useState(readLocal);
+  const [user, setUser] = useState(null);
+  const [ready, setReady] = useState(!isSupabaseAuth);
 
-  const update = useCallback((next) => {
-    setSession(next);
-    write(next);
+  useEffect(() => {
+    if (!supabase) return undefined;
+    let active = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      setUser(data?.session?.user ?? null);
+      setReady(true);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (!session) {
+        setProfile(null);
+        writeLocal(null);
+      }
+    });
+
+    return () => {
+      active = false;
+      sub?.subscription?.unsubscribe();
+    };
   }, []);
 
-  const value = useMemo(
-    () => ({
-      session,
-      isAuthed: Boolean(session),
-      isOnboarded: Boolean(session?.onboarded),
-      signIn: (email) =>
-        update({
-          email: email || "merchant@example.com",
-          onboarded: false,
-          keyIdMasked: null,
-          mode: null,
-        }),
-      // Called at the end of onboarding step 1. `secret` is intentionally
-      // received and discarded — see the note above.
+  const update = useCallback((next) => {
+    setProfile(next);
+    writeLocal(next);
+  }, []);
+
+  const value = useMemo(() => {
+    const isAuthed = isSupabaseAuth ? Boolean(user) : Boolean(profile);
+    const email = user?.email || profile?.email || null;
+
+    return {
+      mode: isSupabaseAuth ? "supabase" : "demo",
+      ready,
+      isAuthed,
+      isOnboarded: Boolean(profile?.onboarded),
+      session: profile ? { ...profile, email } : email ? { email } : null,
+
+      /** Returns { error } so the form can show why a sign-in failed. */
+      signIn: async (emailInput, password) => {
+        if (!supabase) {
+          update({
+            email: emailInput || "merchant@example.com",
+            onboarded: false,
+            keyIdMasked: null,
+            mode: null,
+          });
+          return { error: null };
+        }
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: emailInput,
+          password,
+        });
+        if (error) return { error: error.message };
+        setUser(data.user);
+        if (!readLocal()) {
+          update({ email: emailInput, onboarded: false, keyIdMasked: null, mode: null });
+        }
+        return { error: null };
+      },
+
+      signUp: async (emailInput, password) => {
+        if (!supabase) return { error: "Sign-up needs Supabase credentials." };
+        const { error } = await supabase.auth.signUp({ email: emailInput, password });
+        return { error: error ? error.message : null };
+      },
+
+      // `secret` is received and deliberately discarded — see the note above.
       connectRazorpay: (keyId) =>
         update({
-          ...(session || {}),
+          ...(profile || {}),
+          email,
           keyIdMasked: keyId
             ? `${keyId.slice(0, 9)}${"*".repeat(4)}${keyId.slice(-4)}`
             : null,
         }),
-      chooseMode: (mode) => update({ ...(session || {}), mode }),
-      finishOnboarding: () => update({ ...(session || {}), onboarded: true }),
-      signOut: () => update(null),
-    }),
-    [session, update]
-  );
+      chooseMode: (m) => update({ ...(profile || {}), email, mode: m }),
+      finishOnboarding: () => update({ ...(profile || {}), email, onboarded: true }),
+
+      signOut: async () => {
+        if (supabase) await supabase.auth.signOut();
+        setUser(null);
+        update(null);
+      },
+    };
+  }, [profile, user, ready, update]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

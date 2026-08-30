@@ -4,14 +4,23 @@ import { useAuth } from "../context/AuthContext.jsx";
 import Logo from "../components/Logo.jsx";
 
 export default function Auth() {
-  const { signIn } = useAuth();
+  const { signIn, mode } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    signIn(email);
+    setBusy(true);
+    setError(null);
+    const { error: err } = await signIn(email, password);
+    if (err) {
+      setError(err);
+      setBusy(false);
+      return;
+    }
     navigate("/onboarding/connect");
   };
 
@@ -47,18 +56,21 @@ export default function Auth() {
           />
         </label>
 
-        <button type="submit" className="btn btn-primary btn-block">
-          Enter WinBack
+        {error && <p className="error mono">{error}</p>}
+
+        <button type="submit" className="btn btn-primary btn-block" disabled={busy}>
+          {busy ? "Signing in…" : "Enter WinBack"}
         </button>
       </form>
 
+      {/* State which mode is in play rather than implying a protection that
+          is not there. In demo mode the API answers anonymous callers. */}
       <p className="auth-note mono dim">
-        Demo build — no account is created and no credential is checked or stored.
+        {mode === "supabase"
+          ? "Secured by Supabase. The API verifies your token on every request."
+          : "Demo mode — no credentials configured, any input is accepted, and the API is open."}
       </p>
 
-      <p className="auth-alt mono">
-        <Link to="/onboarding/connect">New to WinBack? Connect your Razorpay account →</Link>
-      </p>
       <p className="auth-alt mono">
         <Link className="dim" to="/">
           ← Back to site

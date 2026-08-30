@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getAccessToken } from "../lib/supabase.js";
 
 // Subscribes to /ws/feed and accumulates agent-action events.
 export function useWebSocket(maxEvents = 200) {
@@ -8,9 +9,16 @@ export function useWebSocket(maxEvents = 200) {
 
   useEffect(() => {
     let retry;
-    const connect = () => {
+    let closed = false;
+    const connect = async () => {
+      if (closed) return;
       const proto = location.protocol === "https:" ? "wss" : "ws";
-      const ws = new WebSocket(`${proto}://${location.host}/ws/feed`);
+      // A browser cannot set headers on a WebSocket handshake, so the access
+      // token travels as a query parameter. The server verifies and discards
+      // it without logging.
+      const token = await getAccessToken();
+      const query = token ? `?token=${encodeURIComponent(token)}` : "";
+      const ws = new WebSocket(`${proto}://${location.host}/ws/feed${query}`);
       wsRef.current = ws;
 
       ws.onopen = () => setConnected(true);
@@ -29,6 +37,7 @@ export function useWebSocket(maxEvents = 200) {
     };
     connect();
     return () => {
+      closed = true;
       clearTimeout(retry);
       wsRef.current?.close();
     };

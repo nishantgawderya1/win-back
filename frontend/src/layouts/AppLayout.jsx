@@ -49,8 +49,8 @@ export default function AppLayout() {
             <span className="mono dim">{session?.email}</span>
             <button
               className="linkish mono"
-              onClick={() => {
-                signOut();
+              onClick={async () => {
+                await signOut();
                 navigate("/");
               }}
             >

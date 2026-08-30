@@ -1,7 +1,15 @@
 // Typed fetch wrappers for the backend routes.
 // Everything server-side is namespaced under /api so the client router can own
 // the bare product paths (/batch, /audit, /halted, /settings).
+import { getAccessToken } from "./supabase.js";
+
 const BASE = "/api";
+
+/** Bearer header when signed in; empty when auth is not configured. */
+async function authHeaders() {
+  const token = await getAccessToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 const qs = (params = {}) => {
   const entries = Object.entries(params).filter(
@@ -11,7 +19,7 @@ const qs = (params = {}) => {
 };
 
 async function get(path) {
-  const res = await fetch(`${BASE}${path}`);
+  const res = await fetch(`${BASE}${path}`, { headers: await authHeaders() });
   if (!res.ok) throw new Error(`${path} -> ${res.status}`);
   return res.json();
 }
@@ -19,7 +27,7 @@ async function get(path) {
 async function send(path, method, body) {
   const res = await fetch(`${BASE}${path}`, {
     method,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
@@ -36,7 +44,11 @@ export const api = {
   uploadBatch: async (file) => {
     const form = new FormData();
     form.append("file", file);
-    const res = await fetch(`${BASE}/batch/upload`, { method: "POST", body: form });
+    const res = await fetch(`${BASE}/batch/upload`, {
+      method: "POST",
+      body: form,
+      headers: await authHeaders(),
+    });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
       throw new Error(`Upload failed (${res.status}). ${detail}`);

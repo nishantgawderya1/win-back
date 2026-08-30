@@ -102,6 +102,29 @@ python scripts/snapshot_demo_stats.py
 Open <http://localhost:5173> for the landing page; the product lives at
 `/dashboard` behind `/auth` and a three-step onboarding.
 
+## Auth
+
+Supabase email/password, off by default. A clean checkout runs with no
+credentials in demo mode: any sign-in is accepted, the session is local, and
+**the API answers anonymous callers** — which the sign-in screen states plainly
+rather than implying a protection that is not there.
+
+To enforce it:
+
+1. Supabase → Settings → API. Copy the project URL and the anon/publishable key.
+2. `frontend/.env` — `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
+3. Root `.env` — the same two values plus `AUTH_REQUIRED=true`.
+4. Create a user in Supabase → Authentication → Users.
+
+The project signs tokens with asymmetric keys (ES256), so the backend verifies
+against the published JWKS and stores **no secret of its own**. Every route is
+covered except two, both deliberate: `/api/health`, and the Razorpay webhook,
+which authenticates by HMAC over the request body rather than a user token.
+
+The live feed is covered too. A browser cannot set headers on a WebSocket
+handshake, so `/ws/feed` takes the token as a query parameter — leaving it open
+would have made the rest pointless, since it streams the same payment data.
+
 ## Database
 
 SQLAlchemy 2.0 async ORM over SQLite by default — one gitignored `winback.db`,

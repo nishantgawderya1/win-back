@@ -20,9 +20,19 @@ import Halted from "./pages/app/Halted.jsx";
 import Exceptions from "./pages/app/Exceptions.jsx";
 import Settings from "./pages/app/Settings.jsx";
 
+/**
+ * Restoring a Supabase session is asynchronous. Redirecting before it resolves
+ * would bounce a signed-in user to the login screen on every page refresh, so
+ * the guards hold until the provider reports ready.
+ */
+function Booting() {
+  return <div className="centered-page" aria-busy="true" />;
+}
+
 /** Signed in, and through onboarding, before any product screen renders. */
 function RequireAuth({ children }) {
-  const { isAuthed, isOnboarded } = useAuth();
+  const { isAuthed, isOnboarded, ready } = useAuth();
+  if (!ready) return <Booting />;
   if (!isAuthed) return <Navigate to="/auth" replace />;
   if (!isOnboarded) return <Navigate to="/onboarding/connect" replace />;
   return children;
@@ -30,7 +40,8 @@ function RequireAuth({ children }) {
 
 /** Onboarding itself needs a session but not a completed onboarding. */
 function RequireSession({ children }) {
-  const { isAuthed } = useAuth();
+  const { isAuthed, ready } = useAuth();
+  if (!ready) return <Booting />;
   return isAuthed ? children : <Navigate to="/auth" replace />;
 }
 

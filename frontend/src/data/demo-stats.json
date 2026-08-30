@@ -1,21 +1,21 @@
 {
   "batch_id": "batch_7d9c3678",
-  "captured_at": "2026-08-30T11:20:37+00:00",
+  "captured_at": "2026-08-30T11:34:03+00:00",
   "record_count": 75,
   "total_at_risk": 2066226.3,
-  "total_recovered": 493724.73,
-  "recovery_rate": 0.2389,
-  "recovered_count": 17,
+  "total_recovered": 760916.96,
+  "recovery_rate": 0.3683,
+  "recovered_count": 29,
   "escalated_count": 9,
   "halted_count": 3,
-  "unresolved_count": 58,
-  "total_unrecovered": 1572501.57,
+  "unresolved_count": 46,
+  "total_unrecovered": 1305309.34,
   "failure_type_count": 6,
   "by_failure_type": {
     "upi_timeout": {
       "count": 21,
       "at_risk": 631788.1,
-      "recovered": 320307.34
+      "recovered": 523145.78
     },
     "card_bank_block": {
       "count": 9,
@@ -35,7 +35,7 @@
     "card_insufficient": {
       "count": 21,
       "at_risk": 520945.15,
-      "recovered": 173417.39
+      "recovered": 237771.18
     },
     "subscription_failed": {
       "count": 9,
@@ -44,33 +44,68 @@
     }
   },
   "exception_reasons": {
-    "retried_without_success": 46,
+    "retried_without_success": 34,
     "escalated_to_human": 9,
     "stopping_rule_halted": 3
   },
   "sample_exceptions": [
     {
-      "payment_id": "pay_ab28a30c7238",
-      "amount": 8842.99,
-      "failure_type": "upi_timeout",
-      "reason": "Unresolved after 1 attempt(s)."
+      "payment_id": "pay_d28934674c6a",
+      "amount": 13870.91,
+      "failure_type": "card_insufficient",
+      "reason": "Unresolved after 3 attempt(s)."
     },
     {
-      "payment_id": "pay_44c43b984c18",
-      "amount": 49236.01,
-      "failure_type": "card_bank_block",
-      "reason": "Hard bank block \u2014 automated retries are pointless. Hand to human."
+      "payment_id": "pay_a0c96f7d4104",
+      "amount": 42027.91,
+      "failure_type": "card_insufficient",
+      "reason": "Unresolved after 3 attempt(s)."
     },
     {
       "payment_id": "pay_ad6ca160053c",
       "amount": 42422.45,
       "failure_type": "card_insufficient",
-      "reason": "Unresolved after 1 attempt(s)."
+      "reason": "Unresolved after 3 attempt(s)."
     }
   ],
   "diagnosis_source": "nemotron",
   "diagnosis_counts": {
     "nemotron_ok": 74,
     "fallback_rules": 1
+  },
+  "attempt_ladder": {
+    "0": 12,
+    "1": 17,
+    "2": 9,
+    "3": 37
+  },
+  "agent_actions": {
+    "planner": 412,
+    "reporter": 408,
+    "monitor": 388,
+    "executor": 388,
+    "diagnosis": 150,
+    "detection": 150,
+    "escalate": 9,
+    "halt": 3
+  },
+  "showcase_diagnosis": {
+    "payment_id": "pay_0f82dc32577c",
+    "amount": 15179.02,
+    "failure_type": "card_insufficient",
+    "root_cause": "The customer's card had insufficient funds to cover the transaction amount of INR 15,179.02 at the time of payment attempt.",
+    "confidence": 0.95,
+    "customer_recovery_score": 0.35,
+    "intervention": "sms_hinglish",
+    "reasoning": [
+      "Error code INSUFFICIENT_FUNDS directly indicates lack of available balance or credit limit.",
+      "Transaction occurred at 18:00 IST, a typical evening time when discretionary spending may be higher but funds could be low after daily expenses.",
+      "Customer has only 1 prior payment and 0 prior recoveries, indicating limited payment history and no evidence of successful recovery after failure.",
+      "Low prior payment count suggests either new customer or infrequent transactor, reducing confidence in ability to recover funds via retry.",
+      "Amount is relatively high (INR 15k+), increasing likelihood that it exceeds available balance or credit limit.",
+      "Medium urgency suggests the transaction is important but not time-critical, allowing for recovery attempts.",
+      "No indication of technical issues (e.g., network, 3DS failure) \u2014 pure fund availability issue.",
+      "Recovery depends on customer replenishing funds or increasing limit, which is uncertain without behavioral history."
+    ]
   }
 }

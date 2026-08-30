@@ -66,6 +66,12 @@ async def diagnose_failure(
         model=settings.nemotron_model,
         temperature=settings.llm_temperature,
         max_tokens=settings.llm_max_tokens,
+        # Nemotron reasons before answering unless told otherwise; the flag is
+        # explicit in both directions so batch latency never depends on a
+        # server-side default changing under us.
+        extra_body={
+            "chat_template_kwargs": {"enable_thinking": settings.llm_enable_thinking}
+        },
         messages=[
             {"role": "system", "content": _SYSTEM_PROMPT},
             {
@@ -82,8 +88,19 @@ async def diagnose_failure(
             },
         ],
     )
-    content = (resp.choices[0].message.content or "").strip()
-    return _parse_json(content)
+    message = resp.choices[0].message
+    result = _parse_json((message.content or "").strip())
+
+    # With thinking enabled the model's chain arrives on a separate field.
+    # Fold it into the reasoning the audit trail shows, so turning thinking on
+    # actually enriches the record rather than just costing latency.
+    thoughts = getattr(message, "reasoning_content", None)
+    if thoughts:
+        result["reasoning"] = [
+            *result["reasoning"],
+            *(line.strip() for line in thoughts.splitlines() if line.strip()),
+        ]
+    return result
 
 
 def _parse_json(content: str) -> dict:
